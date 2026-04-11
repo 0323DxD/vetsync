@@ -1,5 +1,23 @@
 {
   "keyword_map": {
+    "hit by a car": "trauma",
+    "hit by car": "trauma",
+    "run over": "trauma",
+    "swallowed": "foreign_body",
+    "ate something": "foreign_body",
+    "swallow": "foreign_body",
+    "poison": "poisoning",
+    "chocolate": "poisoning",
+    "toxic": "poisoning",
+    "rat poison": "poisoning",
+    "fell from": "fall_injury",
+    "fall": "fall_injury",
+    "cant stand": "collapse",
+    "can't stand": "collapse",
+    "cannot stand": "collapse",
+    "not moving": "collapse",
+    "unresponsive": "collapse",
+    "cold and": "collapse",
     "vomit": "vomiting",
     "throwing up": "vomiting",
     "throw up": "vomiting",
@@ -19,28 +37,39 @@
     "no appetite": "loss_of_appetite",
     "anorexia": "loss_of_appetite",
     "refusing food": "loss_of_appetite",
+    "not eaten": "loss_of_appetite",
     "lethargy": "lethargy",
     "lethargic": "lethargy",
     "tired": "lethargy",
     "weak": "weakness",
     "weakness": "weakness",
     "collapse": "collapse",
+    "losing weight": "weight_loss",
+    "weight loss": "weight_loss",
     "cough": "coughing",
     "sneez": "sneezing",
     "breath": "breathing_difficulty",
     "wheez": "breathing_difficulty",
     "panting": "breathing_difficulty",
+    "fever": "fever",
+    "hot": "fever",
+    "temperature": "fever",
+    "watery eyes": "eye_issues",
     "scratch": "skin_issues",
     "itching": "skin_issues",
     "itch": "skin_issues",
     "rash": "skin_issues",
     "hair loss": "hair_loss",
     "fur loss": "hair_loss",
+    "losing fur": "hair_loss",
+    "losing feather": "feather_loss",
+    "feather loss": "feather_loss",
     "dandruff": "skin_issues",
     "flea": "parasites",
     "tick": "parasites",
     "worm": "parasites",
     "parasite": "parasites",
+    "white spot": "ich_disease",
     "limp": "limping",
     "limping": "limping",
     "injur": "injury",
@@ -49,12 +78,11 @@
     "blood": "bleeding",
     "broken": "fracture",
     "fracture": "fracture",
-    "fever": "fever",
-    "hot": "fever",
-    "temperature": "fever",
+    "broke": "fracture",
     "eye": "eye_issues",
     "discharge": "discharge",
     "ear": "ear_issues",
+    "shaking head": "ear_issues",
     "tooth": "dental_issues",
     "teeth": "dental_issues",
     "dental": "dental_issues",
@@ -64,14 +92,45 @@
     "shaking": "tremor",
     "urinat": "urinary_issues",
     "pee": "urinary_issues",
+    "litter box": "litter_box",
     "drink": "excessive_thirst",
     "thirst": "excessive_thirst",
     "pregnant": "pregnancy",
     "pregnancy": "pregnancy",
+    "in heat": "in_heat",
+    "spay": "spay_neuter",
+    "neuter": "spay_neuter",
     "aggress": "aggression",
     "biting": "aggression",
     "depress": "depression",
-    "anxiety": "anxiety"
+    "anxiety": "anxiety",
+    "barking": "barking",
+    "bark": "barking",
+    "hiding": "hiding_behavior",
+    "chewing": "chewing_behavior",
+    "chew everything": "chewing_behavior",
+    "bird": "bird_general",
+    "not flying": "bird_wing",
+    "wing": "bird_wing",
+    "fish": "fish_general",
+    "upside down": "swim_bladder",
+    "swim bladder": "swim_bladder",
+    "flip": "swim_bladder",
+    "gasping": "fish_gasping",
+    "bottom of": "fish_bottom",
+    "staying at the bottom": "fish_bottom",
+    "vaccin": "vaccination",
+    "immuniz": "vaccination",
+    "deworm": "deworming",
+    "feed": "nutrition",
+    "food": "nutrition",
+    "diet": "nutrition",
+    "human food": "human_food_danger",
+    "medicine": "medication_safety",
+    "medication": "medication_safety",
+    "human medicine": "human_medicine_danger",
+    "treat wound": "wound_treatment",
+    "infection": "infection"
   },
   "knowledge_base": {
     "vomiting": {
@@ -678,6 +737,878 @@
       "species": [
         "dog",
         "cat",
+        "general"
+      ]
+    },
+    "trauma": {
+      "label": "Trauma / Hit by Car",
+      "emoji": "🚨",
+      "severity": "critical",
+      "possible_causes": [
+        "Vehicle accident",
+        "Heavy impact or fall",
+        "Blunt force injury"
+      ],
+      "first_aid": [
+        "THIS IS A LIFE-THREATENING EMERGENCY",
+        "Do NOT move your pet unnecessarily — there may be spinal injury",
+        "Keep them warm and still with a blanket",
+        "If bleeding, apply gentle pressure with a clean cloth",
+        "Rush to the nearest vet clinic IMMEDIATELY",
+        "Do not attempt home treatment"
+      ],
+      "see_vet_if": [
+        "ANY trauma from a vehicle — ALWAYS see a vet immediately",
+        "Even if your pet seems fine, internal injuries may be present",
+        "Pale gums, rapid breathing, or inability to stand"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "foreign_body": {
+      "label": "Swallowed Object / Foreign Body",
+      "emoji": "⚠️",
+      "severity": "critical",
+      "possible_causes": [
+        "Ingestion of toys, bones, or small objects",
+        "Eating sharp items (needles, glass, wood splinters)",
+        "String or thread (especially dangerous for cats)"
+      ],
+      "first_aid": [
+        "Do NOT induce vomiting — sharp objects can cause more damage coming back up",
+        "Do NOT pull on strings hanging from mouth (could be attached to intestines)",
+        "Note what your pet swallowed and when",
+        "Go to the vet immediately for X-ray"
+      ],
+      "see_vet_if": [
+        "Pet swallowed anything sharp — EMERGENCY",
+        "Vomiting, gagging, or drooling after swallowing",
+        "Abdomen is swollen or painful",
+        "Pet stops eating or drinking"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "poisoning": {
+      "label": "Poisoning / Toxic Ingestion",
+      "emoji": "☠️",
+      "severity": "critical",
+      "possible_causes": [
+        "Chocolate (toxic to dogs and cats)",
+        "Rat poison / pesticides",
+        "Human medications (paracetamol, ibuprofen)",
+        "Toxic plants (lilies for cats, sago palm)",
+        "Cleaning chemicals",
+        "Xylitol (sugar-free gum)",
+        "Grapes / raisins / onions / garlic"
+      ],
+      "first_aid": [
+        "THIS IS AN EMERGENCY — Go to vet IMMEDIATELY",
+        "Do NOT wait for symptoms to appear",
+        "Bring the packaging or substance if possible",
+        "Do NOT induce vomiting unless instructed by a vet",
+        "Note the time of ingestion and estimated amount"
+      ],
+      "see_vet_if": [
+        "ANY suspected poisoning — GO TO VET NOW",
+        "Vomiting, tremors, seizures, or collapse",
+        "Drooling, difficulty breathing, or pale gums"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "fall_injury": {
+      "label": "Fall Injury",
+      "emoji": "⬇️",
+      "severity": "high",
+      "possible_causes": [
+        "Fall from height (balcony, window, tree)",
+        "Jump from furniture (small pets)",
+        "Accidental drop"
+      ],
+      "first_aid": [
+        "Keep your pet warm and still — do not force movement",
+        "Check for visible injuries, swelling, or deformity",
+        "If your pet cannot walk or is in pain, do not force it",
+        "Dalhin agad sa vet for emergency check"
+      ],
+      "see_vet_if": [
+        "ANY fall from a significant height — always see a vet",
+        "Limping, crying, or inability to move",
+        "Bleeding from nose, mouth, or ears",
+        "Fast breathing or lethargy after the fall"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "bird",
+        "general"
+      ]
+    },
+    "collapse": {
+      "label": "Collapse / Cannot Stand",
+      "emoji": "🆘",
+      "severity": "critical",
+      "possible_causes": [
+        "Spinal injury",
+        "Severe weakness or dehydration",
+        "Poisoning",
+        "Heart failure",
+        "Low blood sugar",
+        "Neurological emergency"
+      ],
+      "first_aid": [
+        "THIS IS AN EMERGENCY",
+        "Do NOT force your pet to move or stand",
+        "Support with a towel sling if needed for transport",
+        "Keep warm and rush to vet immediately",
+        "Check for breathing and heartbeat"
+      ],
+      "see_vet_if": [
+        "Pet cannot stand — EMERGENCY, go to vet NOW",
+        "Loss of consciousness or unresponsiveness",
+        "Pale or blue gums",
+        "Known toxin exposure"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "rabbit",
+        "hamster",
+        "general"
+      ]
+    },
+    "barking": {
+      "label": "Excessive Barking",
+      "emoji": "🐕",
+      "severity": "low",
+      "possible_causes": [
+        "Boredom or lack of exercise",
+        "Anxiety or fear (separation anxiety, noise phobia)",
+        "Territorial behavior",
+        "Seeking attention",
+        "Pain or discomfort",
+        "Hearing changes in older dogs"
+      ],
+      "first_aid": [
+        "Ensure adequate daily exercise (walks, play)",
+        "Provide mental stimulation (puzzle toys, training)",
+        "Create a comfortable, quiet sleeping area",
+        "Avoid yelling — it can worsen the behavior",
+        "Consider calming aids (music, pheromone diffusers)"
+      ],
+      "see_vet_if": [
+        "Barking is sudden and unusual (may indicate pain)",
+        "Accompanied by pacing, destruction, or other anxiety signs",
+        "Your dog also seems hurt or unwell"
+      ],
+      "species": [
+        "dog"
+      ]
+    },
+    "aggression": {
+      "label": "Sudden Aggression",
+      "emoji": "😾",
+      "severity": "medium",
+      "possible_causes": [
+        "Pain or hidden injury",
+        "Fear or stress",
+        "Territorial behavior",
+        "Hormonal changes (intact animals)",
+        "Neurological issues",
+        "Redirected aggression"
+      ],
+      "first_aid": [
+        "Do NOT punish — it can make aggression worse",
+        "Give your pet space and remove triggers",
+        "Observe what causes the aggressive behavior",
+        "Keep children and other pets safe",
+        "Consult a vet to rule out medical causes"
+      ],
+      "see_vet_if": [
+        "Sudden aggression with no obvious trigger",
+        "Accompanied by other symptoms (lethargy, not eating)",
+        "Biting or attacking family members",
+        "Aggression worsening over time"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "hiding_behavior": {
+      "label": "Hiding / Withdrawal",
+      "emoji": "🙈",
+      "severity": "medium",
+      "possible_causes": [
+        "Stress or environmental changes",
+        "Pain or illness",
+        "Fear (new people, loud noises)",
+        "New pet or family member in the home",
+        "Post-trauma recovery"
+      ],
+      "first_aid": [
+        "Observe muna — could be stress or illness",
+        "Create a safe, quiet space for your pet",
+        "Do not force interaction — let them come to you",
+        "Maintain regular feeding and routine",
+        "Monitor for other symptoms (not eating, lethargy)"
+      ],
+      "see_vet_if": [
+        "Hiding for more than 2 days with reduced eating",
+        "Accompanied by other symptoms",
+        "Your pet is also grooming excessively or not grooming at all",
+        "Sudden behavior change with no clear cause"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "chewing_behavior": {
+      "label": "Destructive Chewing",
+      "emoji": "🦴",
+      "severity": "low",
+      "possible_causes": [
+        "Teething (puppies under 6 months)",
+        "Boredom or lack of stimulation",
+        "Separation anxiety",
+        "Dental pain or gum issues",
+        "Nutritional deficiency"
+      ],
+      "first_aid": [
+        "Provide appropriate chew toys",
+        "Increase daily exercise and mental enrichment",
+        "Puppy-proof your home (remove valuable items from reach)",
+        "Use bitter apple spray on furniture",
+        "Reward good chewing behavior (positive reinforcement)"
+      ],
+      "see_vet_if": [
+        "Chewing on non-food items obsessively (pica)",
+        "Bleeding gums or broken teeth",
+        "Swallowing pieces of objects (foreign body risk)"
+      ],
+      "species": [
+        "dog"
+      ]
+    },
+    "litter_box": {
+      "label": "Litter Box Avoidance",
+      "emoji": "🚽",
+      "severity": "medium",
+      "possible_causes": [
+        "Urinary tract infection (UTI)",
+        "Stress or territorial marking",
+        "Dirty or unsuitable litter box",
+        "Pain when urinating or defecating",
+        "New litter type disliked by cat",
+        "Location of litter box (too noisy or hard to access)"
+      ],
+      "first_aid": [
+        "Rule out medical causes first — this may be a UTI",
+        "Clean litter box daily (cats are very particular)",
+        "Ensure one litter box per cat, plus one extra",
+        "Try different litter types",
+        "Place box in a quiet, accessible location"
+      ],
+      "see_vet_if": [
+        "Straining to urinate (EMERGENCY — possible blockage)",
+        "Blood in urine",
+        "Crying when using litter box",
+        "Sudden change in litter box habits"
+      ],
+      "species": [
+        "cat"
+      ]
+    },
+    "bird_general": {
+      "label": "Bird Health Concern",
+      "emoji": "🐦",
+      "severity": "medium",
+      "possible_causes": [
+        "Respiratory infection",
+        "Nutritional deficiency",
+        "Stress from environment changes",
+        "Parasites (mites, lice)",
+        "Egg binding (female birds)"
+      ],
+      "first_aid": [
+        "Keep your bird in a warm, quiet environment",
+        "Ensure fresh water and food are available",
+        "Observe for loss of appetite, fluffed feathers, or labored breathing",
+        "Birds hide illness well — any change in behavior is significant",
+        "Consult an avian vet if symptoms persist"
+      ],
+      "see_vet_if": [
+        "Open-beak breathing (EMERGENCY for birds)",
+        "Fluffed up and not moving for extended time",
+        "Discharge from eyes, nose, or beak",
+        "Not eating for more than a few hours"
+      ],
+      "species": [
+        "bird"
+      ]
+    },
+    "bird_wing": {
+      "label": "Wing Injury / Cannot Fly",
+      "emoji": "🦅",
+      "severity": "high",
+      "possible_causes": [
+        "Wing fracture or sprain",
+        "Collision with window or wall",
+        "Attack by another animal",
+        "Feather damage",
+        "Illness causing weakness"
+      ],
+      "first_aid": [
+        "Do NOT force movement or try to set the wing yourself",
+        "I-place muna sa cage to prevent stress and further injury",
+        "Keep the cage in a warm, dark, quiet area",
+        "Do not wrap the wing tightly — birds need to breathe with their chest",
+        "Visit an avian vet immediately"
+      ],
+      "see_vet_if": [
+        "Wing is drooping or at an odd angle",
+        "Bird is in visible pain or distress",
+        "Cannot perch or balance properly",
+        "Any suspected fracture"
+      ],
+      "species": [
+        "bird"
+      ]
+    },
+    "feather_loss": {
+      "label": "Feather Loss / Plucking",
+      "emoji": "🪶",
+      "severity": "medium",
+      "possible_causes": [
+        "Normal molting (seasonal — usually gradual)",
+        "Stress-related plucking (boredom, anxiety, loneliness)",
+        "Nutritional deficiency (low protein or vitamins)",
+        "Parasites (feather mites, lice)",
+        "Skin infection (bacterial or fungal)"
+      ],
+      "first_aid": [
+        "Check for bald patches or irritated skin (not just normal molting)",
+        "Ensure a varied, balanced diet with pellets, fruits, and vegetables",
+        "Provide enrichment (toys, foraging activities, social interaction)",
+        "Keep environment clean and stress-free"
+      ],
+      "see_vet_if": [
+        "Bald spots with red or irritated skin",
+        "Excessive plucking (bird pulling its own feathers repeatedly)",
+        "Also losing appetite or lethargic",
+        "Feather loss is sudden and widespread"
+      ],
+      "species": [
+        "bird"
+      ]
+    },
+    "fish_general": {
+      "label": "Fish Health Concern",
+      "emoji": "🐟",
+      "severity": "medium",
+      "possible_causes": [
+        "Poor water quality (ammonia, nitrite spikes)",
+        "Incorrect temperature or pH",
+        "Overfeeding",
+        "Bacterial or parasitic infection",
+        "Stress from overcrowding or tank mates"
+      ],
+      "first_aid": [
+        "Test water parameters immediately (pH, ammonia, nitrite, nitrate)",
+        "Do a 25-50% water change with dechlorinated water",
+        "Check water temperature — should match species requirements",
+        "Do not overfeed — feed only what fish eat in 2 minutes",
+        "Observe for spots, fin damage, or abnormal swimming"
+      ],
+      "see_vet_if": [
+        "Multiple fish dying in short period",
+        "Visible parasites, fungus, or open sores",
+        "Fish not responding to water changes"
+      ],
+      "species": [
+        "fish"
+      ]
+    },
+    "swim_bladder": {
+      "label": "Swim Bladder Disorder / Flipping",
+      "emoji": "🐠",
+      "severity": "medium",
+      "possible_causes": [
+        "Swim bladder disease (most common cause of upside-down swimming)",
+        "Overfeeding or constipation",
+        "Poor water quality",
+        "Bacterial infection",
+        "Genetic deformity (especially in fancy goldfish)"
+      ],
+      "first_aid": [
+        "Fast the fish for 24-48 hours",
+        "After fasting, feed a small piece of peeled, boiled pea",
+        "Check water quality agad — do a partial water change",
+        "Lower the water level slightly to reduce stress",
+        "Maintain consistent water temperature"
+      ],
+      "see_vet_if": [
+        "Fish cannot right itself after 3 days of treatment",
+        "Also showing signs of infection (red spots, fin rot)",
+        "Multiple fish affected (may be water quality issue)"
+      ],
+      "species": [
+        "fish"
+      ]
+    },
+    "fish_gasping": {
+      "label": "Fish Gasping at Surface",
+      "emoji": "🫧",
+      "severity": "high",
+      "possible_causes": [
+        "Low oxygen levels in water",
+        "Ammonia poisoning (most dangerous)",
+        "High water temperature (reduces oxygen)",
+        "Overcrowding",
+        "Gill disease or parasites"
+      ],
+      "first_aid": [
+        "Do an IMMEDIATE 50% water change with dechlorinated water",
+        "Add an air pump or airstone to increase oxygen",
+        "Check water temperature — cool down if too high",
+        "Test for ammonia and nitrite — treat if elevated",
+        "Reduce feeding temporarily"
+      ],
+      "see_vet_if": [
+        "Multiple fish gasping (tank-wide issue)",
+        "Red or inflamed gills",
+        "Fish not responding to water changes within hours"
+      ],
+      "species": [
+        "fish"
+      ]
+    },
+    "fish_bottom": {
+      "label": "Fish Sitting at Bottom",
+      "emoji": "🐟",
+      "severity": "medium",
+      "possible_causes": [
+        "Stress from poor water quality",
+        "Illness or infection",
+        "Bullying from tank mates",
+        "Swim bladder issues",
+        "Old age or exhaustion"
+      ],
+      "first_aid": [
+        "Test water parameters immediately",
+        "Do a partial water change",
+        "Check for bullying — isolate if needed",
+        "Observe for other symptoms (spots, fin damage, bloating)",
+        "Ensure proper water temperature"
+      ],
+      "see_vet_if": [
+        "Fish lying on side and not responding to stimuli",
+        "Visible spots, sores, or fin rot",
+        "Multiple fish affected simultaneously"
+      ],
+      "species": [
+        "fish"
+      ]
+    },
+    "ich_disease": {
+      "label": "Ich Disease / White Spots",
+      "emoji": "⚪",
+      "severity": "medium",
+      "possible_causes": [
+        "Ichthyophthirius multifiliis (Ich) — common protozoan parasite",
+        "Introduced through new fish or contaminated equipment",
+        "Stress from temperature changes or poor water quality"
+      ],
+      "first_aid": [
+        "Isolate affected fish if possible",
+        "Raise water temperature gradually to 28-30°C (speeds up parasite life cycle)",
+        "Add aquarium salt (1 tablespoon per 5 gallons)",
+        "Use commercial Ich treatment medication",
+        "Treat the entire tank, not just the affected fish"
+      ],
+      "see_vet_if": [
+        "White spots spreading rapidly",
+        "Fish becoming lethargic or not eating",
+        "Not responding to treatment after 7 days"
+      ],
+      "species": [
+        "fish"
+      ]
+    },
+    "vaccination": {
+      "label": "Vaccination Information",
+      "emoji": "💉",
+      "severity": "low",
+      "possible_causes": [],
+      "first_aid": [
+        "Puppies/kittens: Start vaccines at 6-8 weeks of age",
+        "Core vaccines for DOGS: Rabies, Distemper, Parvovirus, Hepatitis",
+        "Core vaccines for CATS: Rabies, FVRCP (Feline Viral Rhinotracheitis, Calicivirus, Panleukopenia)",
+        "Adult pets need annual boosters or every 3 years depending on vaccine type",
+        "Even indoor cats need core vaccines — they can be exposed through windows, visitors, or escaped moments",
+        "Ask your VetSync vet for a personalized vaccination schedule"
+      ],
+      "see_vet_if": [
+        "Your pet has never been vaccinated",
+        "You're unsure if vaccines are up to date",
+        "Pet shows swelling, vomiting, or lethargy after vaccination (rare reaction)"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "deworming": {
+      "label": "Deworming Information",
+      "emoji": "🐛",
+      "severity": "low",
+      "possible_causes": [],
+      "first_aid": [
+        "Puppies/kittens: Deworm every 2-4 weeks until 12 weeks old, then monthly until 6 months",
+        "Adult pets: Deworm every 3-6 months depending on lifestyle",
+        "Outdoor pets or those with flea exposure need more frequent deworming",
+        "Use vet-approved dewormers — human dewormers are NOT safe for pets",
+        "Signs of worms: scooting, visible worms in stool, bloated belly, weight loss"
+      ],
+      "see_vet_if": [
+        "Visible worms in stool or around the anus",
+        "Pet is losing weight despite eating well",
+        "Vomiting worms",
+        "Young puppy/kitten with bloated belly"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "nutrition": {
+      "label": "Pet Nutrition & Feeding",
+      "emoji": "🍖",
+      "severity": "low",
+      "possible_causes": [],
+      "first_aid": [
+        "Feed age-appropriate commercial pet food (puppy/kitten vs adult vs senior)",
+        "Puppies: 3-4 times/day. Adult dogs: 2 times/day",
+        "Kittens: 3-4 times/day. Adult cats: 2 times/day",
+        "Always provide fresh, clean water",
+        "Avoid: chocolate, grapes, raisins, onions, garlic, xylitol, alcohol, caffeine",
+        "BIRDS: Seeds, pellets, fruits (apple, banana), vegetables. Avoid avocado and chocolate",
+        "Treats should be less than 10% of daily food intake"
+      ],
+      "see_vet_if": [
+        "Pet is overweight or underweight",
+        "You need a specific diet plan for a health condition",
+        "Pet has food allergies or sensitivities"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "bird",
+        "general"
+      ]
+    },
+    "human_food_danger": {
+      "label": "Human Food Safety for Pets",
+      "emoji": "🚫",
+      "severity": "medium",
+      "possible_causes": [],
+      "first_aid": [
+        "DANGEROUS foods for pets: Chocolate, grapes, raisins, onions, garlic, xylitol (sugar-free gum), avocado, macadamia nuts, alcohol, caffeine",
+        "SAFE in small amounts: Plain cooked chicken, plain rice, carrots, pumpkin, blueberries",
+        "CATS: Avoid dairy (most cats are lactose intolerant), raw fish, and raw eggs",
+        "DOGS: No cooked bones (can splinter), no fatty scraps",
+        "When in doubt, DO NOT give it to your pet"
+      ],
+      "see_vet_if": [
+        "Pet ate any toxic food — go to vet IMMEDIATELY",
+        "Vomiting, diarrhea, or tremors after eating human food"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "in_heat": {
+      "label": "Pet in Heat / Estrus",
+      "emoji": "💕",
+      "severity": "medium",
+      "possible_causes": [],
+      "first_aid": [
+        "Keep your pet indoors and away from other animals",
+        "Use pet diapers if needed for dogs in heat",
+        "Increase supervision — pets in heat will try to escape",
+        "Be patient — behavioral changes (vocalization, restlessness) are normal",
+        "Consider spaying/neutering to prevent unwanted pregnancies and health risks"
+      ],
+      "see_vet_if": [
+        "Prolonged heat cycle (more than 3 weeks for dogs)",
+        "Unusual discharge (green, foul-smelling — may indicate pyometra)",
+        "Your pet is distressed or in pain",
+        "You want to discuss spaying/neutering"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "spay_neuter": {
+      "label": "Spaying / Neutering",
+      "emoji": "✂️",
+      "severity": "low",
+      "possible_causes": [],
+      "first_aid": [
+        "Generally recommended at around 6 months of age",
+        "Benefits: Prevents unwanted litters, reduces cancer risk, decreases roaming and aggression",
+        "For large dog breeds, your vet may recommend waiting until 12-18 months",
+        "Recovery is typically 7-14 days with proper care",
+        "Book an appointment with your VetSync vet to discuss the best timing"
+      ],
+      "see_vet_if": [
+        "You want to schedule the procedure",
+        "Your pet is in heat and you want to discuss timing",
+        "Post-surgery concerns (swelling, discharge, lethargy beyond 48 hours)"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "rabbit",
+        "general"
+      ]
+    },
+    "medication_safety": {
+      "label": "Medication Safety for Pets",
+      "emoji": "💊",
+      "severity": "medium",
+      "possible_causes": [],
+      "first_aid": [
+        "NEVER give human medication to pets without vet approval",
+        "Paracetamol (Tylenol) is TOXIC to cats — even one tablet can be fatal",
+        "Ibuprofen is TOXIC to both dogs and cats",
+        "Always use vet-prescribed medications at the correct dosage",
+        "Store medications securely — pets can chew through bottles",
+        "When in doubt, call your VetSync vet before giving any medication"
+      ],
+      "see_vet_if": [
+        "You accidentally gave human medication to your pet — EMERGENCY",
+        "Pet is showing side effects from medication",
+        "You need guidance on safe pet medications"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "human_medicine_danger": {
+      "label": "Human Medicine for Pets — DANGER",
+      "emoji": "⛔",
+      "severity": "high",
+      "possible_causes": [],
+      "first_aid": [
+        "NO. Most human medications are DANGEROUS or FATAL to pets",
+        "Paracetamol/Tylenol: TOXIC — especially to cats (one tablet can be fatal)",
+        "Ibuprofen/Advil: TOXIC — causes kidney failure and stomach ulcers in pets",
+        "Aspirin: TOXIC to cats, potentially dangerous for dogs without vet guidance",
+        "Only give medications your vet has specifically prescribed for YOUR pet"
+      ],
+      "see_vet_if": [
+        "If you already gave human medicine to your pet — go to vet IMMEDIATELY",
+        "Vomiting, lethargy, or collapse after taking any medication"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "wound_treatment": {
+      "label": "Home Wound Care",
+      "emoji": "🩹",
+      "severity": "medium",
+      "possible_causes": [],
+      "first_aid": [
+        "For MINOR wounds only (small cuts, scratches):",
+        "Clean gently with clean water or saline solution",
+        "Apply pet-safe antiseptic (NOT hydrogen peroxide on deep wounds)",
+        "Bandage loosely — do not wrap too tight",
+        "Prevent licking with an e-collar (cone)",
+        "For DEEP or LARGE wounds — go to vet immediately, do not attempt home treatment"
+      ],
+      "see_vet_if": [
+        "Deep, large, or gaping wounds",
+        "Animal bite wounds (high infection risk)",
+        "Wound that is red, swollen, or has discharge (infected)",
+        "Bleeding that doesn't stop within 10 minutes"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "infection": {
+      "label": "Signs of Infection",
+      "emoji": "🦠",
+      "severity": "medium",
+      "possible_causes": [
+        "Bacterial infection from wounds",
+        "Viral infection",
+        "UTI or internal infection",
+        "Post-surgical infection"
+      ],
+      "first_aid": [
+        "Signs of infection: redness, swelling, discharge, warmth, or bad smell",
+        "Do NOT self-treat with antibiotics — wrong dosage is dangerous",
+        "Keep any wound areas clean and dry",
+        "Monitor your pet's temperature if possible",
+        "Visit your vet for proper diagnosis and treatment"
+      ],
+      "see_vet_if": [
+        "Fever, lethargy, or loss of appetite with wound",
+        "Discharge is green, yellow, or foul-smelling",
+        "Area is hot, swollen, and painful",
+        "Infection is spreading or not improving"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "weight_loss": {
+      "label": "Weight Loss",
+      "emoji": "📉",
+      "severity": "medium",
+      "possible_causes": [
+        "Parasites (worms)",
+        "Diabetes",
+        "Kidney disease",
+        "Hyperthyroidism (cats)",
+        "Cancer",
+        "Dental pain making eating difficult",
+        "Stress or dietary issues"
+      ],
+      "first_aid": [
+        "Monitor your pet's food intake carefully",
+        "Weigh your pet weekly to track changes",
+        "Ensure food is fresh and palatable",
+        "Check teeth and mouth for pain or issues"
+      ],
+      "see_vet_if": [
+        "Unexplained weight loss — always see a vet",
+        "Losing weight despite eating normally",
+        "Accompanied by increased thirst or urination",
+        "Visible ribs or hip bones (body condition too thin)"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "sneezing": {
+      "label": "Sneezing",
+      "emoji": "🤧",
+      "severity": "low",
+      "possible_causes": [
+        "Upper respiratory infection",
+        "Allergies (dust, pollen)",
+        "Foreign object in nose",
+        "Dental disease (upper teeth roots near nasal passages)",
+        "Feline herpesvirus (cats)"
+      ],
+      "first_aid": [
+        "Monitor muna — occasional sneezing is normal",
+        "Clean any nasal discharge gently with a damp cloth",
+        "Ensure good ventilation in your home",
+        "Keep your pet away from smoke, strong perfumes, or dusty areas"
+      ],
+      "see_vet_if": [
+        "Sneezing with colored discharge (green/yellow)",
+        "Persistent sneezing for more than a few days",
+        "Also has eye discharge, coughing, or fever",
+        "Bloody nasal discharge"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "hair_loss": {
+      "label": "Hair/Fur Loss",
+      "emoji": "🐩",
+      "severity": "medium",
+      "possible_causes": [
+        "Allergies (food, environmental, flea allergy)",
+        "Ringworm (fungal — can spread to humans)",
+        "Mange (mites — sarcoptic or demodectic)",
+        "Hormonal imbalance (thyroid, Cushing's)",
+        "Stress-related over-grooming",
+        "Bacterial skin infection"
+      ],
+      "first_aid": [
+        "Check for patterns — circular patches may indicate ringworm",
+        "Look for fleas or flea dirt in the fur",
+        "Bathe with gentle, vet-approved shampoo",
+        "Do not use human products on your pet"
+      ],
+      "see_vet_if": [
+        "Circular bald patches (possible ringworm — also affects humans)",
+        "Intense itching causing wounds",
+        "Hair loss spreading to new areas",
+        "Accompanied by skin redness, sores, or scaling"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "general"
+      ]
+    },
+    "fracture": {
+      "label": "Fracture / Broken Bone",
+      "emoji": "🦴",
+      "severity": "high",
+      "possible_causes": [
+        "Trauma (hit by car, fall from height)",
+        "Animal fight",
+        "Accidental step-on (small pets)",
+        "Metabolic bone disease (poor nutrition in birds/reptiles)"
+      ],
+      "first_aid": [
+        "Do NOT try to set the bone yourself",
+        "Keep your pet still and calm — restrict movement",
+        "Support the injured area carefully during transport",
+        "Use a flat surface (board, towel) as a makeshift stretcher",
+        "Go to vet immediately for X-ray and proper treatment"
+      ],
+      "see_vet_if": [
+        "Limb at an unnatural angle — ALWAYS see a vet",
+        "Swelling, bruising, or intense pain",
+        "Pet cannot bear weight on the limb",
+        "Any suspected broken bone"
+      ],
+      "species": [
+        "dog",
+        "cat",
+        "bird",
         "general"
       ]
     },
@@ -8944,53 +9875,53 @@
     {
       "text": "hardy joined the faculty at ohio state and obtained board certifications in veterinary surgery and in veterinary emergency and critical care during this time she was invited to texas a&m university to speak at a conference and she really liked the environmentand the college station area in generaland when a job opened up at texas a&ms college of veterinary medicine & biomedical sciences (cvm) she immediately applied for it and got the job",
       "keywords": [
-        "surgery",
-        "emergency"
+        "emergency",
+        "surgery"
       ]
     },
     {
       "text": "what we see is anything from a horse with a fever to major surgical candidates such as abdominal surgery and colic to neonatal emergency cases hardy said we receive many food animal emergencies which can include llamas pigs cattle goats and sheep in fact im bringing my own sheep today to be looked at by the food animal faculty so its a heavy after-hours schedule for sure",
       "keywords": [
         "fever",
+        "emergency",
         "colic",
-        "surgery",
-        "emergency"
+        "surgery"
       ]
     },
     {
       "text": "students participate in all of the work at the lah which is a great opportunity for them to see more emergent or urgent disease and illnesses as well as to participate in the triaging of those cases whether the animal needs to have immediate surgery or just monitored its a good opportunity for the students to learn in the hospital environment",
       "keywords": [
-        "surgery",
-        "disease"
+        "disease",
+        "surgery"
       ]
     },
     {
       "text": "i think my job as a clinical instructor is to be able to do all that i can to produce veterinarians who can go and serve people in portions of the state like the texas panhandle that have a predominant livestock industry he said our program provides a pipeline for students who want to be feedlot consultant veterinarians dairy veterinarians or swine veterinarians in large production-based facilities",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
       "text": "washburn also devotes time to research projects that impact the cattle industry collaborating with partners in academia and industry to develop technology for detecting early signs of bovine respiratory disease (brd) which is responsible for more than 45 percent of cattle deaths in feedlots",
       "keywords": [
-        "respiratory",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
       "text": "her studies mentored by dr noah cohen have found that obesity is a risk factor for the development of laminitis; thus she has focused her attention on better understanding the physiological processes associated with obesity to improve the mechanisms for preventing or managing obesity and ultimately reduce the burden of laminitis",
       "keywords": [
-        "obesity",
-        "laminitis"
+        "laminitis",
+        "obesity"
       ]
     },
     {
       "text": "although epidemiological data are lacking clinical experience indicates that this disease is highly prevalent in central and southeast texas and is the most common disorder of the upper respiratory tract evaluated at the lah according to coleman",
       "keywords": [
         "clinical",
-        "respiratory",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
@@ -9017,8 +9948,8 @@
     {
       "text": "before being placed with good indy was in an accident that left him with a deep cut in his leg he was brought to the texas a&m large animal hospital (lah) and the couple from brenham paid for his treatment and cared for him years later good brought him back to the lah because of a severe infection that left his throat paralyzed",
       "keywords": [
-        "treatment",
-        "infection"
+        "infection",
+        "treatment"
       ]
     },
     {
@@ -9031,15 +9962,15 @@
     {
       "text": "while that project has advanced into the human medicine realm criscitiello and another team including masters student kelly head are now turning their attention to using these same antibodies in a way they hope might one day be used to create an immunological treatment for breast cancer",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "the human forms of the projections have been shown in the laboratory to stop most hiv strains from infecting human cells and to protect animal models from infection which occurs when the antibody projection binds to the gp120 antigen of the virus that it uses to attach to the host white blood cell",
       "keywords": [
-        "virus",
-        "infection"
+        "infection",
+        "virus"
       ]
     },
     {
@@ -9096,31 +10027,31 @@
     {
       "text": "still reeling maki began further testing he learned that the cancer had a 97 percent survival rate and that luckily all that would be required was to remove his right kidney because the cancer hadnt spread",
       "keywords": [
-        "kidney",
-        "cancer"
+        "cancer",
+        "kidney"
       ]
     },
     {
       "text": "long but scary story short the cancer was all in the kidney and now my kidneys gone he said literally when i was in there after my two-week appointment the doctor read that (prognosis) to me and he said ‘so basically that means youre healed",
       "keywords": [
-        "kidney",
-        "cancer"
+        "cancer",
+        "kidney"
       ]
     },
     {
       "text": "that lesson was compounded by what he concluded may have led to his cancerexposure to chemicals now known to cause kidney cancer without wearing a respirator at his manufacturing job all those years ago",
       "keywords": [
-        "kidney",
-        "cancer"
+        "cancer",
+        "kidney"
       ]
     },
     {
       "text": "for the second equine project longs graduate student cassandra skenandore is studying how well new anti-inflammatory treatments relieve arthritis similar to humans horses also suffer from diseases caused by excessive inflammation",
       "keywords": [
-        "treatment",
-        "arthritis",
         "inflammation",
-        "disease"
+        "arthritis",
+        "disease",
+        "treatment"
       ]
     },
     {
@@ -9134,8 +10065,8 @@
       "text": "in one of those projects funded by the texas a&m agrilife research long in collaboration with fellow vtpp professor dr mark westhusin is using genetic technology to make cattle less susceptible to bovine respiratory diseases (brd) or shipping fever brd is estimated to cost the cattle industry billions of dollars each year",
       "keywords": [
         "fever",
-        "respiratory",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
@@ -9148,16 +10079,16 @@
     {
       "text": "when you use antibiotics you not only kill the bacteria that is producing the toxin but you also start affecting all of the animals microbiome particularly the good bacteria that is keeping these animals healthy long said",
       "keywords": [
-        "bacteria",
         "antibiotic",
+        "bacteria",
         "toxin"
       ]
     },
     {
       "text": "to minimize the use of antibiotics longs group is making small genetic changes in the cattle genome so that these genetically engineered animals are less susceptible to the brd-causing bacteria",
       "keywords": [
-        "bacteria",
-        "antibiotic"
+        "antibiotic",
+        "bacteria"
       ]
     },
     {
@@ -9170,35 +10101,35 @@
     {
       "text": "welsh randel penny riggs and david riley at texas a&m agrilife research recently received funding from the us department of agriculture to focus on the use of blood cells as a surrogate measurement for determining how specific tissues or organs respond to stress the implications of this research could mean that dna from blood cells could be used to help predict future resistance to respiratory disease according to welsh",
       "keywords": [
-        "respiratory",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
       "text": "at school ive learned for example all about bovine respiratory disease at work i have the opportunity to familiarize myself with all of the various vaccines to prevent respiratory disease as well as the antibiotics that treat respiratory disease gooder said",
       "keywords": [
         "vaccine",
-        "respiratory",
         "antibiotic",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
       "text": "r equi frequently infects the lungs of foals causing symptoms such as fever and coughing however by the time symptoms are present the infection is well-progressed and more difficult to treat with antibiotics",
       "keywords": [
-        "symptom",
         "fever",
+        "antibiotic",
         "infection",
-        "antibiotic"
+        "symptom"
       ]
     },
     {
       "text": "because of this some veterinarians choose to treat foals without symptoms with antibiotics to reduce the risk of severe disease or even death this practice however raises the risk of r equi becoming antibiotic resistant",
       "keywords": [
-        "symptom",
         "veterinarian",
         "antibiotic",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
@@ -9206,78 +10137,78 @@
       "keywords": [
         "vaccine",
         "immune",
-        "bacteria",
+        "antibiotic",
         "infection",
-        "antibiotic"
+        "bacteria"
       ]
     },
     {
       "text": "within the cvms department of large animal clinical sciences cohen is a professor in large animal internal medicine and the associate department head for research and graduate studies in collaboration with researchers at harvard medical school cohen was recently co-senior author on a study published in the scientific journal plos pathogens the study described the first vaccine effective against r equi in foals",
       "keywords": [
-        "clinical",
-        "vaccine"
+        "vaccine",
+        "clinical"
       ]
     },
     {
       "text": "study results indicated that the vaccine protected foals from r equi pneumonia and that this protection was mediated by antibodies transferred from mares to their foals via colostrum (the first form of milk produced by the mammary glands)",
       "keywords": [
-        "pneumonia",
-        "vaccine"
+        "vaccine",
+        "pneumonia"
       ]
     },
     {
       "text": "eleven of the 12 foals born to mares that had been vaccinated did not develop r equi pneumonia in a control group of seven mares that did not receive a vaccine against r equi six of the seven foals born to these mares developed pneumonia after exposure to r equi at 4 weeks of age all foals infected with r equi pneumonia in this study recovered",
       "keywords": [
-        "pneumonia",
-        "vaccine"
+        "vaccine",
+        "pneumonia"
       ]
     },
     {
       "text": "these results indicate that the vaccine given to mares during pregnancy is an effective way to protect foals against r equi pneumonia",
       "keywords": [
-        "pneumonia",
-        "vaccine"
+        "vaccine",
+        "pneumonia"
       ]
     },
     {
       "text": "our study is the first vaccine to have demonstrated efficacy to protect foals against pneumonia caused by r equi cohen said after many years of trying this appears to be a breakthrough",
       "keywords": [
-        "pneumonia",
-        "vaccine"
+        "vaccine",
+        "pneumonia"
       ]
     },
     {
       "text": "establishing a vaccine to protect foals against r equi pneumonia would not only save foals lives but also would help lower the risk of r equi becoming antibiotic resistant",
       "keywords": [
-        "pneumonia",
         "vaccine",
-        "antibiotic"
+        "antibiotic",
+        "pneumonia"
       ]
     },
     {
       "text": "cohen and his colleagues have already documented the emergence of resistance to the class of antibiotics most effective and commonly used to treat r equi pneumonia in foals therefore it is of utmost importance to reduce the use of antibiotics used to treat this disease",
       "keywords": [
-        "pneumonia",
         "antibiotic",
+        "pneumonia",
         "disease"
       ]
     },
     {
       "text": "cohen hopes this study will help shift the emphasis of treating r equi pneumonia with antibiotics to a method that will help the patients immune response protect them against infection creating a vaccine to prevent the development of r equi pneumonia is of global importance cohen said",
       "keywords": [
-        "pneumonia",
         "vaccine",
         "immune",
+        "antibiotic",
         "infection",
-        "antibiotic"
+        "pneumonia"
       ]
     },
     {
       "text": "one especially exciting aspect of the success of this vaccine is that it suggests the possibility of protecting foals against other bacterial infections however more research is needed to know for sure",
       "keywords": [
         "vaccine",
-        "bacteria",
-        "infection"
+        "infection",
+        "bacteria"
       ]
     },
     {
@@ -9290,30 +10221,30 @@
     {
       "text": "dr steiners contributions to veterinary medicine and healthcare more broadly are outstanding said dr jonathan levine department head and the helen mcwhorter chair in vscs he directs a field-leading laboratory that serves veterinarians and clients throughout the world he is continuously and fearlessly innovating by building new diagnostic tests for prevalent diseases and exploring novel treatments for these challenging diseases there are few other veterinarians who have helped our profession towa",
       "keywords": [
-        "treatment",
         "veterinarian",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "in fact dr moise is one of the few veterinarians to have contributed meaningfully to discovering mechanisms of naturally occurring lethal arrhythmias affecting dogs the molecular basis of rhythm disturbances and development of clinical applications for arrhythmia management the nominator continued",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
       "text": "while dr peggy tinkey was an accomplished private practice veterinarian for many years her decision to join the university of texas md anderson cancer center allowed her to truly impact the efforts to make cancer history",
       "keywords": [
-        "cancer",
-        "veterinarian"
+        "veterinarian",
+        "cancer"
       ]
     },
     {
       "text": "as a senior clinical veterinarian for the centers for disease control and prevention (cdc) dr cassandra tansey works to ensure both humans and animals are safe from zoonotic diseases",
       "keywords": [
-        "clinical",
         "veterinarian",
+        "clinical",
         "disease"
       ]
     },
@@ -9327,9 +10258,9 @@
     {
       "text": "as a primary responder for the cdcs global rapid response team designed to increase the cdcs capacity to respond to global health threats tansey served as the cdc emergency operations center epidemiologist during the zika virus outbreak and was one of the first veterinarians deployed during the seoul hantavirus outbreak that affected 17 people in 11 midwestern states",
       "keywords": [
-        "virus",
         "veterinarian",
-        "emergency"
+        "emergency",
+        "virus"
       ]
     },
     {
@@ -9349,8 +10280,8 @@
     {
       "text": "because there is no vaccination to prevent chagas disease in humans or animals and treatment is limited meyers said the team also plans to use this grant to focus on what can be done to control the kissing bugs and prevent transmission",
       "keywords": [
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
@@ -9385,44 +10316,44 @@
     {
       "text": "dr heather wilson-robles and the oncology service at the texas veterinary medical teaching hospital (vmth) in the texas a&m college of veterinary medicine & biomedical sciences (cvm) have received a $200 000 grant from the petco foundation that will financially assist owners with their pets cancer treatments",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "the pet cancer treatment grant supported by the blue buffalo foundation for cancer research inc provides support for the treatment for domestic companion animals suffering from cancer to pet parents of modest means or to pet parents whose pets have provided a service to others",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "funds will be used to offset the cost of cancer treatment for qualifying owners who are seeking treatment for their pet at the vmth",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "she was rescued by the texas marine mammal stranding network (tmmsn) and treated for 14 months at their galveston center for multiple ailments including pneumonia and nasal parasites in collaboration with seaworld san antonios animal care team",
       "keywords": [
-        "pneumonia",
-        "parasite"
+        "parasite",
+        "pneumonia"
       ]
     },
     {
       "text": "noaa fisheries determined that rimmy could not be released back to the wild because of her need for continued long-term medical treatment in order to find her a permanent home a bacterial infection of the central nervous system or brain needed to be ruled out",
       "keywords": [
-        "treatment",
+        "infection",
         "bacteria",
-        "infection"
+        "treatment"
       ]
     },
     {
       "text": "her collaborations have included research on antibiotic use resistance and stewardship which has the potential to directly affect cattle practice and industries; a project to determine drug elimination times following the treatment of livestock with non-steroidal anti-inflammatory drugs which will be critical information for show livestock competitions; and a publication about the effect of heat on truck boxes used to store drugs and equipment which had drug potency implications for practitioner",
       "keywords": [
-        "treatment",
-        "antibiotic"
+        "antibiotic",
+        "treatment"
       ]
     },
     {
@@ -9436,8 +10367,8 @@
       "text": "with those funds she plans to create short video tutorials for each physiology ii class that will highlight each lecture and be available to students both before and after class; develop round-table discussions of cases with both medical and veterinary practitioners that will cover fluid balance in critical patients as well as the diagnosis and management of female reproductive disease(s) and of diabetes mellitus (types i and ii); and design and implement a hands-on laboratory that covers techni",
       "keywords": [
         "diagnosis",
-        "diabetes",
-        "disease"
+        "disease",
+        "diabetes"
       ]
     },
     {
@@ -9450,8 +10381,8 @@
     {
       "text": "in 2015 just before shaker turned 9 years old he was diagnosed with cancer as he began treatments he developed a fluid build-up in his chest and abdomen near the end of 2016 not knowing what the fluid was shaker was referred to texas a&ms veterinary medical teaching hospital (vmth)",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
@@ -9464,22 +10395,22 @@
     {
       "text": "after the tragic death of their beloved border collie tj patricia decided to establish the tj hunter oncology endowment at the texas a&m college of veterinary medicine & biomedical sciences (cvm) to promote cancer research and treatment for dogs per her request patricias desire that her funds be used so that other pet owners dont have to go through the trials they did with tj as she suffered with cancer",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "when tj was taken in for a regular check-up one day the veterinarian discovered she had swollen lymph nodes a low white blood cell count a urinary infection and anemia patricia said it was heartbreaking news and very sudden",
       "keywords": [
-        "infection",
-        "veterinarian"
+        "veterinarian",
+        "infection"
       ]
     },
     {
       "text": "currently one of jons major research collaborations is with dr amy heimberger a neurosurgeon at md anderson dr heimbergers research explores possible treatments based on directing a patients immune system to attack gliomas (a glioma is a type of tumor that occurs in the brain and spinal cord)",
       "keywords": [
-        "treatment",
-        "immune"
+        "immune",
+        "treatment"
       ]
     },
     {
@@ -9499,23 +10430,23 @@
     {
       "text": "scott began to focus on those few unusual cases that raised unanswered questions such as when he came across a steer that had died from pneumonia but also harbored lung worms a rare find in the frozen north the case left scott wondering: should northern alberta ranchers invest in treating their animals for this parasite which was otherwise rare and had no apparent ill effects",
       "keywords": [
-        "pneumonia",
         "parasite",
-        "worm"
+        "worm",
+        "pneumonia"
       ]
     },
     {
       "text": "after graduation scott accepted a position in food safety surveillance in the alberta government where he became interested in bacterial resistance and specifically how agricultural practices like antibiotics in animal feed might encourage resistance in humans",
       "keywords": [
-        "bacteria",
-        "antibiotic"
+        "antibiotic",
+        "bacteria"
       ]
     },
     {
       "text": "at an aggie thanksgiving hosted by the university scott met the chief veterinarian for the texas department of criminal justice the late dr derry magee their discussion revealed the perfect setup for a studythe texas prison system where the food supply and consumers were understood in such a way that scott could confidently know where the food came from and where there would be very little food introduction from the outside world shortly thereafter scott and a team of researchers from texas a&mu",
       "keywords": [
-        "bacteria",
-        "veterinarian"
+        "veterinarian",
+        "bacteria"
       ]
     },
     {
@@ -9529,8 +10460,8 @@
       "text": "dr kate creevy associate professor of small animal internal medicine said she had a disease that involved her liver her spleen and many of her muscles we could see this was a source of pain for her and not something that we wanted to ask her to fight a final diagnosis will be determined and reported shortly",
       "keywords": [
         "diagnosis",
-        "liver",
         "pain",
+        "liver",
         "disease"
       ]
     },
@@ -9551,8 +10482,8 @@
     {
       "text": "studying parasites is hardly romantic and theres hardly any romance shared between the couple from what an observer can tell during the day they are hard at work at their separate stationsguo hunched over his bench pipetting and separating samples into tiny plastic tubes and zhang on the other side of the room eyes glued to a microscope as she counts the parasites left after her drug treatment",
       "keywords": [
-        "treatment",
-        "parasite"
+        "parasite",
+        "treatment"
       ]
     },
     {
@@ -9565,37 +10496,37 @@
     {
       "text": "the two departed the conference as newfound collaborators whose work together would extend over the next two decades as they published on a variety of diseases including breast cancer down syndrome and bone anabolic treatments",
       "keywords": [
-        "treatment",
         "cancer",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "a crucial step in finding a treatment or cure for any disorder much less one that has been researched only intermittently iscreating an animal model to study how the disease progresses",
       "keywords": [
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "with this disease there are more than 300 mutations that have been reported; most are reported as compound heterozygotes because the mother and father dont know they are carriers and are not symptomatic gaddy said",
       "keywords": [
-        "symptom",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
       "text": "the groundbreaking research introduced in 2013 has opened the doors for monumental breakthroughs in medicine by allowing humans to repair genes responsible for diseases or as in the case of texas a&ms college of veterinary medicine & biomedical sciences (cvm) drs larry suva and dana gaddy replicate the genetic mutations that cause hypophosphatasiaan enzyme mutation characterized by the abnormal development of bones and teeth caused by defective mineralization in the bodywhich will allow them to",
       "keywords": [
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "dr debbie threadgill an assistant professor in the college of veterinary medicine & biomedical sciences (cvm) department of veterinary pathobiology (vtpb) investigates bacterial-induced diseases while dr david threadgill a distinguished professor in the vtpb department and in the college of medicines department of molecular and cellular medicineas well as the director of the texas a&m institute of genome sciences and societystudies mouse models of cancer",
       "keywords": [
-        "bacteria",
         "cancer",
+        "bacteria",
         "disease"
       ]
     },
@@ -9609,18 +10540,18 @@
     {
       "text": "dr debbie threadgill investigates bacterial-induced digestive diseases such as those caused by campylobacter spp several campylobacter species are known to infect humans and are the main culprits of bacterial foodborne disease campylobacter infection occurs from eating raw or undercooked poultry leading to an estimated 13 million illnesses each year in the us infected individuals usually recover without medical treatment unless the individuals immune system is compromised by infection (eg aids)",
       "keywords": [
-        "treatment",
         "immune",
-        "bacteria",
         "infection",
-        "disease"
+        "bacteria",
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "she had some bleeding in her gi tract that we couldnt explain; we did a few tests to look for a reason but we couldnt find one torkildsen said then her puppies started to go into distress and we had to take her to emergency surgery",
       "keywords": [
-        "surgery",
-        "emergency"
+        "emergency",
+        "surgery"
       ]
     },
     {
@@ -9633,8 +10564,8 @@
     {
       "text": "i decided to stick with this field because there is no cure and no approved treatment for fasd she said by doing these studies hopefully down the road we can find therapeutic intervention strategies to improve the quality of life for these children its a life-long affliction that goes well into adulthood so i think its a valid cause",
       "keywords": [
-        "treatment",
-        "tick"
+        "tick",
+        "treatment"
       ]
     },
     {
@@ -9647,22 +10578,22 @@
     {
       "text": "maitland whose research focuses on novel treatments for cardiovascular disease had previously worked with a vmth cardiovascular doctor to create devices for use in the operating room; the doctor encouraged maitland and the biomedical engineers in his lab to move toward creating devices for animal patients",
       "keywords": [
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "however in elite equine performance athletes such as racehorses or any horse that works at high speeds it is considered the third most common reason for poor performance after lameness and respiratory diseases",
       "keywords": [
-        "respiratory",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
       "text": "so its important for horsemen to recognize symptoms of equine acute and chronic heart disease awareness of other syndromes predisposing horses to heart problems is key",
       "keywords": [
-        "symptom",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
@@ -9675,8 +10606,8 @@
     {
       "text": "horses can develop heart diseases quickly or over a period of time the most common congenital disorder of horses is ventricular septal defect (vsd) foals are born with a hole in the wall separating the two lower chambers of the heart symptoms include lethargy shortness of breath and the inability to exercise normally vsds are associated with loud heart murmurs",
       "keywords": [
-        "symptom",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
@@ -9689,23 +10620,23 @@
     {
       "text": "af is often associated with poor performance in horses practicing high-intensity exercise its also the most common cardiac arrhythmia in human athletes engaging in endurance sports af often develops in horses with advanced heart disease; af can develop with minimal or no detectable cardiac signs electrolyte abnormalities resulting from excessive sweating may predispose horses to af it can also occur in horses having experienced previous illness that inflames the heart muscle (such as severe coli",
       "keywords": [
-        "colic",
-        "disease"
+        "disease",
+        "colic"
       ]
     },
     {
       "text": "in addition to clinical signs thorough auscultation of the heart alerts veterinarians about cardiovascular disease when murmurs and abnormal rhythms are heard the next tool for the evaluation of horses with murmurs or arrhythmias is centered on the echocardiogram this diagnostic modality is becoming increasingly available at many referral equine hospitals",
       "keywords": [
-        "clinical",
         "veterinarian",
+        "clinical",
         "disease"
       ]
     },
     {
       "text": "for people with horses with poor performance my recommendations are to have a veterinarian you are confident with examine the horse he said if there is a clear abnormalitylike lameness wheezes coughing heart murmursthat can explain the performance problem investigate or treat if there is no smoking gun do an exercise test that evaluates all body systems at the same time this has two advantages: saving time while diagnosing subclinical problems that can be treated simultaneously the disadvantage",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
@@ -9719,23 +10650,23 @@
       "text": "i should think that ranch horses should follow the same pattern as occurs in previous studies in sport horses in that they often have several subclinical diseases simultaneously that dont quite stop them from exercising navas said lameness is consistently the most common one in other groups then respiratory second depending on the group then cardiac disease more rarely",
       "keywords": [
         "clinical",
-        "respiratory",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
       "text": "fortunately for waylon the dermatology service at the texas a&m college of veterinary medicine & biomedical sciences (cvm) was there to help after examining waylons case dr adam patterson clinical associate professor and chief of dermatology at the cvm concluded that waylon was experiencing an autoimmune disease of the skin",
       "keywords": [
-        "clinical",
         "immune",
+        "clinical",
         "disease"
       ]
     },
     {
       "text": "his own immune system was attacking his skin patterson said the pimples on his paw pads were extremely painfulhe couldnt even assume the posture to urinate",
       "keywords": [
-        "immune",
-        "pain"
+        "pain",
+        "immune"
       ]
     },
     {
@@ -9748,11 +10679,11 @@
     {
       "text": "though veterinary dermatologists are trained to treat emergency cases such as waylons most dermatology cases at the cvm involve health issues with fleas and ticks skin allergies and secondary conditions such as bacterial ear or yeast infections",
       "keywords": [
-        "bacteria",
-        "infection",
-        "tick",
         "flea",
-        "emergency"
+        "infection",
+        "emergency",
+        "tick",
+        "bacteria"
       ]
     },
     {
@@ -9765,34 +10696,34 @@
     {
       "text": "in addition to being examined by a veterinarian dermatology patients at the cvm are also seen by doctor of veterinary medicine students this provides a unique and effective environment for treatment as well as a great learning opportunity for students",
       "keywords": [
-        "treatment",
-        "veterinarian"
+        "veterinarian",
+        "treatment"
       ]
     },
     {
       "text": "our goal at the cvm is to educate the next generation of veterinarians patterson said students are taught to recognize details between different skin diseases so that when they become veterinarians theyre confident in treating dermatology conditions in waylons case i taught students how to differentiate between a skin allergy and an autoimmune disease",
       "keywords": [
-        "immune",
         "veterinarian",
-        "allergy",
-        "disease"
+        "immune",
+        "disease",
+        "allergy"
       ]
     },
     {
       "text": "whether a patient is having an emergency such as an autoimmune disease or they are experiencing symptoms of a common skin allergy patterson and his team are ready to face any condition with a passion for dermatology and an itch to make a difference the dermatology service continues to provide excellent care for its patients",
       "keywords": [
-        "symptom",
         "immune",
         "emergency",
-        "allergy",
-        "disease"
+        "disease",
+        "symptom",
+        "allergy"
       ]
     },
     {
       "text": "otamendi krasnow and other texas a&m surgeons explored their treatment options and decided surgery was the best approach as they waited for the 2- to 3-pound puppy to get a little bigger in order to perform the surgery they explored various surgical treatments including working with a pharmaceutical/bioengineering company to produce a bio-compatible implant that could be placed over the defect in her skull",
       "keywords": [
-        "treatment",
-        "surgery"
+        "surgery",
+        "treatment"
       ]
     },
     {
@@ -9820,8 +10751,8 @@
     {
       "text": "even in the rigorous veterinary program she always communicated to us how she wanted our experience in her class to be informative clinically relevant and relatively low-stress a student said she expected us to know the material so that we were competent in day-to-day applications and her activities and tests always reflected that expectation i can say with the utmost confidence that dr pine has had a hand in shaping who i am as a student and as a future veterinarian",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
@@ -9855,23 +10786,23 @@
     {
       "text": "at age 50 stubbs followed his dream to establish a mobile equine practice; to do so he had to tackle the obstacle of taking a one-man operation on the road his first inventiona stock trailer that would allow him to travel to his patientswas followed by many others including six us patents for equine dental tools that are now used by veterinarians across the country",
       "keywords": [
-        "dental",
-        "veterinarian"
+        "veterinarian",
+        "dental"
       ]
     },
     {
       "text": "in addition to pioneering modern equine dental procedures and selling more than 65 of the mobile and stationary equine stocks he created stubbs contribution to the equine medical field includes creating a protocol for the safe sedation and reversal of an equine patient performing usda-approved clinical vaccine studies for six years and giving many educational presentations and live demonstrations to both horse trainers and owners",
       "keywords": [
-        "clinical",
         "vaccine",
+        "clinical",
         "dental"
       ]
     },
     {
       "text": "highlighting his dedication to the profession stubbs also taught his theory and the use of dental equipment and techniques to veterinarians across the country and was well-respected by his clients all over the state",
       "keywords": [
-        "dental",
-        "veterinarian"
+        "veterinarian",
+        "dental"
       ]
     },
     {
@@ -9884,58 +10815,58 @@
     {
       "text": "but while discussing his finding with fellow doctoral student wael kamel younis decided to challenge the cells lacking zc3h11a with a virus infection",
       "keywords": [
-        "virus",
-        "infection"
+        "infection",
+        "virus"
       ]
     },
     {
       "text": "to their surprise there was a drastic reduction of the growth of adenovirus (a group of viruses that can infect the tissue linings of the respiratory tract eyes intestines urinary tract and nervous system) in the cells lacking zc3h11a compared with cells expressing the protein",
       "keywords": [
-        "respiratory",
-        "virus"
+        "virus",
+        "respiratory"
       ]
     },
     {
       "text": "the observation that the amount of zc3h11a protein increases during a virus infection was a very surprising finding since viruses typically shut down host-cell protein expression to favor virus production andersson said",
       "keywords": [
-        "virus",
-        "infection"
+        "infection",
+        "virus"
       ]
     },
     {
       "text": "no approved treatments for angelman syndrome exist today said allyson berent genetx chief science officer the fdas orphan-drug designation for gtx-101 highlights the significant need for treatments for individuals with angelman syndrome and we believe that targeted delivery of gtx-101 represents a promising novel approach to treat this devastating disorder",
       "keywords": [
-        "treatment",
-        "liver"
+        "liver",
+        "treatment"
       ]
     },
     {
       "text": "this is a new area of medicine known as a targeted therapy said scott dindot phd associate professor in the texas a&m college of veterinary medicine & biomedical sciences (cvm) historically clinicians have treated symptoms of a disease or disorder with medication but not the cause of the condition a targeted therapy goes after the cause of the condition and attempts to fix it",
       "keywords": [
-        "symptom",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
       "text": "the fdas orphan drug designation for gtx-101 is an important next step in bringing effective treatments to individuals with angelman syndrome said paula evans genetx chief executive officer activation of the normally silent paternal ube3a gene has the potential to mitigate many of the disorders debilitating symptoms",
       "keywords": [
-        "treatment",
-        "symptom"
+        "symptom",
+        "treatment"
       ]
     },
     {
       "text": "the orphan drug act became law in 1983 fewer than 5 000 applicants have received this special designation according to the fda website rare conditions are often described as orphan diseases or disorders when there are few or no treatment options there are about 7 000 known orphan diseases in the united states",
       "keywords": [
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "the fdas orphan drug designation program provides orphan status to drugs and biologics that are defined as those intended for the safe and effective treatment diagnosis or prevention of rare diseases or disorders that affect fewer than 200 000 people in the united states",
       "keywords": [
         "diagnosis",
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
@@ -9955,23 +10886,23 @@
     {
       "text": "this is a new area of medicine known as a targeted therapy historically clinicians have treated symptoms (of a disease) with medication but not the cause of the condition dindot said a targeted therapy goes after the cause of the condition and attempts to fix it in some way the drug we developed is called an antisense oligonucleotide which is a synthetic molecule of dna that binds to a gene and alters the way it is regulated",
       "keywords": [
-        "symptom",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
       "text": "for the past eight years fast has narrowly focused on investing in leading-edge technologies to treat the underlying cause and debilitating symptoms of angelman syndrome said allyson berent fast cso and genetx coo our aggressive research agenda and collaboration with texas a&m agrilife research has identified and characterized a promising therapeutic to address this debilitating syndrome angelman syndrome has such a significant unmet need for which there are no approved therapeutics and the land",
       "keywords": [
-        "treatment",
-        "symptom"
+        "symptom",
+        "treatment"
       ]
     },
     {
       "text": "this also includes the texas a&m veterinary medical teaching hospital (vmth) which trains veterinary students and serves texans and their veterinarians with unique features like the state-of-the-art diagnostic imaging & cancer treatment center",
       "keywords": [
-        "treatment",
+        "veterinarian",
         "cancer",
-        "veterinarian"
+        "treatment"
       ]
     },
     {
@@ -9984,8 +10915,8 @@
     {
       "text": "though people are often expected to follow up surgery or an injury with physical therapy it is less common that pets receive the same treatment however rafferty explained that it is just as important for pets to participate in therapy as it is for humans",
       "keywords": [
-        "treatment",
-        "surgery"
+        "surgery",
+        "treatment"
       ]
     },
     {
@@ -9998,8 +10929,8 @@
     {
       "text": "thanks to a diagnostic test created by researchers in the texas a&m college of veterinary medicine & biomedical sciences (cvm) veterinarians now have a tool that can detect 11 types of tick-borne diseases including the seven most common in dogs",
       "keywords": [
-        "tick",
         "veterinarian",
+        "tick",
         "disease"
       ]
     },
@@ -10020,11 +10951,11 @@
     {
       "text": "with the tickpath layerplex a dog that exhibits symptoms of a tick-borne disease can be taken to a veterinarian who can submit to the tvmdl a single blood sample taken during routine testing to check for lyme disease relapsing fever ehrlichiosis rocky mountain spotted fever and canine babesia and others",
       "keywords": [
-        "symptom",
+        "veterinarian",
         "fever",
         "tick",
-        "veterinarian",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
@@ -10037,24 +10968,24 @@
     {
       "text": "a lot of veterinarians will submit blood for a cytology or serology test she said for example in the case of lyme disease and relapsing fever the tests are not that easy to differentiate them sometimes you can only say ‘it was either one or the other its not clear cut",
       "keywords": [
-        "fever",
         "veterinarian",
+        "fever",
         "disease"
       ]
     },
     {
       "text": "with the texas a&m test if a sample falls into the gray zone where the test cant determine a positive or negative result you either collect a sample a few weeks later or if the veterinarian feels that the clinical signs correlate with the disease you think it is then treat it",
       "keywords": [
-        "clinical",
         "veterinarian",
+        "clinical",
         "disease"
       ]
     },
     {
       "text": "either way this test allows the veterinarian to provide a more educated treatment when they see their patients esteve-gasent said",
       "keywords": [
-        "treatment",
-        "veterinarian"
+        "veterinarian",
+        "treatment"
       ]
     },
     {
@@ -10082,17 +11013,17 @@
     {
       "text": "if you know exactly what the dog has you can observe the clinical signs much better esteve-gasent said if you start antibiotic treatment and the veterinarian sees progress they could take a second sample later and see whether we still detect the pathogens because its very very very sensitive if the test says its clean that animal is cleared",
       "keywords": [
-        "clinical",
-        "treatment",
         "veterinarian",
-        "antibiotic"
+        "clinical",
+        "antibiotic",
+        "treatment"
       ]
     },
     {
       "text": "the project funded by texas a&m agrilife and the usda agricultural research services has been submitted for a provisional patent and once more sampling has been conducted to further validate the test a final patent will be submitted veterinarians and dog owners can help with that process by submitting ticks found on dogs to the tvmdl for testing",
       "keywords": [
-        "tick",
-        "veterinarian"
+        "veterinarian",
+        "tick"
       ]
     },
     {
@@ -10112,15 +11043,15 @@
     {
       "text": "the owner took the dog to the tent for veterinary care and informed the students that the dog wasnt current on its rabies vaccination the bitten child was in the medical tent and it was the veterinary students job to find the attending physician and inform him that the dog wasnt current on its vaccine kurkowski said the mother of the child demanded the dog be euthanized and the medical and veterinary students had to diffuse the situation",
       "keywords": [
-        "vaccine",
-        "rabies"
+        "rabies",
+        "vaccine"
       ]
     },
     {
       "text": "its not just taking care of animals when youre in a disaster environment; theres noise and chaos around you people constantly coming in with this or that problem or needing you to talk to the media or offering to volunteer said deb zoran professor in the department of small animal clinical sciences and vet member the chaos of a disaster environment is similar to all of the other things that are going on while youre just trying to be a veterinarian; thats a really good skill set to learn for life",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
@@ -10133,23 +11064,23 @@
     {
       "text": "today the growing threat of a pandemic is one of societys greatest challenges and flu viruses have the highest pandemic potential; this is what keeps me up at night but the emergence of new flu viruses are also right at the nexus of animals and humans where we have prevention opportunities parker said veterinarians have a huge role to play as most emerging infectious diseases are zoonotic; if we can prevent a spillover event from animals into humans or detect it early we may be able to prevent a",
       "keywords": [
-        "virus",
         "veterinarian",
-        "disease"
+        "disease",
+        "virus"
       ]
     },
     {
       "text": "efforts to prevent detect and respond to the threat of the new flu viruses and other microbes are examples of how human animal and environmental health converge to form global one health as a concept to contain emerging infectious diseases at their source according to parker",
       "keywords": [
-        "virus",
-        "disease"
+        "disease",
+        "virus"
       ]
     },
     {
       "text": "but eades love for horses never waned; she started researching laminitis a crippling disease that is categorized by inflammation in the horse hoof at the university of georgia she described this time in her life as perfect because her passions for medicine horses and research were being used simultaneously in the veterinary profession",
       "keywords": [
-        "inflammation",
         "laminitis",
+        "inflammation",
         "disease"
       ]
     },
@@ -10157,26 +11088,26 @@
       "text": "radiology can be used to stage cancers or look for certain diseases such as liver or renal disease george said oftentimes you can make a diagnosis without radiology but you wouldnt know how extensive the disease is i think radiology is a really useful tool and it should be used more often to make better treatment choices",
       "keywords": [
         "diagnosis",
-        "treatment",
-        "liver",
         "cancer",
-        "disease"
+        "liver",
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "i want to learn the day-to-day life of a veterinarian george said i know the medicine diseases and treatments but i dont know how to apply them yet; thats what i am really hoping to learn this last year",
       "keywords": [
-        "treatment",
         "veterinarian",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "when it came time for patrick and watson to decide how to treat their beloved pet their perspective as both parents and researchers in the texas a&ms department of microbial pathogenesis and immunology shaped their treatment decision-sadie would undergo brain surgery to remove the tumor donate the tissue for analysis and enroll in an innovative clinical trial on gliomas being conducted at texas a&ms college of veterinary medicine & biomedical sciences (cvm)",
       "keywords": [
         "clinical",
-        "treatment",
-        "surgery"
+        "surgery",
+        "treatment"
       ]
     },
     {
@@ -10203,15 +11134,15 @@
     {
       "text": "as the grant team analyzes the tumor tissue samples from sadie and other dogs they will look for genetic mutations and immune responses known to occur in human brain tumors if the results show that canine brain tumors are indeed a good model for human brain tumors then clinical trials in mans best friend could reveal which new glioma immunotherapies have the best chance of success in mankind",
       "keywords": [
-        "clinical",
-        "immune"
+        "immune",
+        "clinical"
       ]
     },
     {
       "text": "all of the owners really like it most of our patients have cancer and are going through a cancer treatment of some sort so its a scary process she said ive always thought our clients are among the most dedicated to their pets because theyre going through a lot to gain some time so i think it means the world to their owners that somebody is treating them as if its their own pet",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
@@ -10225,10 +11156,10 @@
       "text": "while many of these individuals are likely to have contracted the disease in latin america before moving to the us there is increasing recognition for locally acquired human infections in the southern states where infected kissing bugs are widespread a growing number of dogs across the south are recognized to be infected possibly from consuming infected bugs in the environment while some infected dogs may live happy health lives others may die acutely or suffer chronic cardiac disease because th",
       "keywords": [
         "vaccine",
-        "treatment",
         "parasite",
         "infection",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
@@ -10264,10 +11195,10 @@
     {
       "text": "because there is no cure for chagas disease only treatments to manage the symptoms hamer emphasizes that studying the parasite in bugs and wildlife can provide key data to protect the health of humans and dogs and public outreach is a key component",
       "keywords": [
-        "treatment",
-        "symptom",
         "parasite",
-        "disease"
+        "disease",
+        "symptom",
+        "treatment"
       ]
     },
     {
@@ -10280,17 +11211,17 @@
     {
       "text": "starting with understanding and characterizing how dogs age the project seeks to build upon what little information currently exists to describe normal aging in various sizes and breeds creevy said this not only will help veterinarians better treat aging canines but it will help researchers understand conditions such as diabetes and arthritis that affect both dogs and humans as they age",
       "keywords": [
-        "diabetes",
+        "veterinarian",
         "arthritis",
-        "veterinarian"
+        "diabetes"
       ]
     },
     {
       "text": "in many ways dogs mirror their owners by sharing the same habits dogs can serve as a model for human conditions such as obesity cancer and arthritis but dogs are not only helping people; people are helping dogs as well",
       "keywords": [
-        "arthritis",
         "obesity",
-        "cancer"
+        "cancer",
+        "arthritis"
       ]
     },
     {
@@ -10304,26 +11235,26 @@
     {
       "text": "gordons work in the department of small animal clinical sciences at the texas a&m college of veterinary medicine & biomedical sciences (cvm) is transforming discovery into innovative treatment by helping veterinarians everywhere more effectively treat canine cardiac disease gordon calls this top-down research which is the identification of treatments and diagnostic tests that help primary care veterinarians do a better job caring for their patients",
       "keywords": [
-        "clinical",
-        "treatment",
         "veterinarian",
-        "disease"
+        "clinical",
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "recently gordon helped identify an effective treatment for mitral valve disease (mvd) in dogs now gordon is on to the next step applying and disseminating those research results as an educator she teaches students and fellow veterinarians about these new and effective treatment options and as a clinician she offers state-of-the-art treatment to her patients-all in the name of improving the hearts and lives of dogs and their owners",
       "keywords": [
-        "treatment",
         "veterinarian",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "in humans this condition is typically managed by surgical repair of the valve while surgery is an option for some dogs availability and cost currently limit its clinical utility however according to gordon many dogs will now benefit from earlier treatment with pimobendan",
       "keywords": [
         "clinical",
-        "treatment",
-        "surgery"
+        "surgery",
+        "treatment"
       ]
     },
     {
@@ -10336,23 +11267,23 @@
     {
       "text": "the impact of the epic study will continue in many ways over the coming years as it is incorporated into updated guidelines the curriculum at veterinary schools and continuing education lectures for veterinarians however the ultimate influence the study has on the practice habits of veterinarians with respect to how they treat the most common cause of heart disease in the dog will be its lasting legacy many dogs will experience a relevant extension in symptom-free and overall survival a benefit",
       "keywords": [
-        "symptom",
         "veterinarian",
-        "disease"
+        "disease",
+        "symptom"
       ]
     },
     {
       "text": "for many veterinarians especially those who operate their own businesses entrepreneurship and business know-how are career staples but business is changing information is more readily available than ever before and information technology is rapidly expanding the human health care delivery systems are rapidly changing with veterinary health care delivery close behind veterinary medicine not only must adapt it must lead-thats the cvm and north american veterinary community (navc) philosophy as wel",
       "keywords": [
-        "liver",
-        "veterinarian"
+        "veterinarian",
+        "liver"
       ]
     },
     {
       "text": "with innovation paramount in their minds six teams of students representing the colleges of veterinary medicine & biomedical sciences (cvm) agriculture & life sciences and engineering participated in the first aggies invent event a 48-hour intensive design experience offered at the engineering innovation center (eic) the cvms students engaged in hands-on projects that pushed their innovation creativity and communication skills competing for more than $2 000 in cash prizes in an effort to develop",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
@@ -10365,8 +11296,8 @@
     {
       "text": "since reaching fort bend county the vet has overseen the treatment and care for large animals sheltered on site; has accepted more than three dozen companion animals for evaluation and treatment; continued to care for the ttf1 and ttf2 search-and-rescue canines; coordinated with emergency management officials on areas of concern; and continued instruction with the vet rotation students highlighting the specialty care required for search-and-rescue canines as well as in the areas of emergency car",
       "keywords": [
-        "treatment",
-        "emergency"
+        "emergency",
+        "treatment"
       ]
     },
     {
@@ -10379,8 +11310,8 @@
     {
       "text": "dr wilson-robles is a quintessential clinician-scholar whose independent and collaborative discoveries are carving the path to a better understanding of cancer and ultimately to effective cancer treatments in canine patients that will eventually translate to human patients said dr eleanor m green the carl b king dean of veterinary medicine at texas a&m university",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
@@ -10395,53 +11326,53 @@
       "keywords": [
         "pain",
         "cancer",
-        "surgery",
-        "disease"
+        "disease",
+        "surgery"
       ]
     },
     {
       "text": "every two minutes a child is diagnosed with cancer worldwide one in five kids diagnosed in the us will not survive and of those who do two-thirds will suffer from long-term effects from the very treatment that saved their life; each phase of the research process from the laboratory to translational research to clinical trials plays a crucial part in developing new therapies that will give kids with cancer the healthy childhoods they deserve",
       "keywords": [
         "clinical",
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "st baldricks leads the charge to take childhood back from cancer and is dedicated to funding the best research no matter where it takes place said kathleen ruddy ceo of the st baldricks foundation through our grants we are proud to support world-class experts of today as well as the next generation of researchers whose innovative approaches employ cutting-edge technology and emerging science to find cures and treatments to create a growing generation of childhood cancer survivors",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "researchers have observed that about 10-20 percent of people living with hiv naturally develop neutralizing antibodies to the virus but usually only after nearly two years of infection these neutralizing antibodies have been shown in the laboratory to stop most hiv strains from infecting human cells and to protect animal models from infection",
       "keywords": [
-        "virus",
-        "infection"
+        "infection",
+        "virus"
       ]
     },
     {
       "text": "however scientists have so far been unsuccessful in prompting the human immune system to produce these antibodies through immunization further while bnabs isolated from people with hiv infection have demonstrated promise in primate studies and have entered human studies for hiv prevention and treatment questions remain about whether effective antibodies could be produced rapidly and at a scale suitable for widespread distribution",
       "keywords": [
-        "treatment",
         "immune",
-        "infection"
+        "infection",
+        "treatment"
       ]
     },
     {
       "text": "while no one knows definitively why these powerful antibodies evolved in cattle one theory holds that the animals long hcdr3 loops are tied to their extensive gastrointestinal systems cattle and other ruminant animals have multi-chambered stomachs and a robust population of bacteria in their digestive tracts to help break down a diet of tough grasses however these bacteria can pose an infection risk if they escape the gut so cattle with a versatile mechanism for producing potent antibodies would",
       "keywords": [
-        "bacteria",
-        "infection"
+        "infection",
+        "bacteria"
       ]
     },
     {
       "text": "a minority of people living with hiv produce neutralizing antibodies but only after a significant period of infection at which point virus in their body has already evolved to resist these defenses said dennis r burton phd a lead author on the study director of the nihs center for hiv/aids vaccine immunology and immunogen discovery and scientific director of the iavi neutralizing antibody consortium at the scripps research institute unlike human antibodies cattle antibodies are more likely to be",
       "keywords": [
         "vaccine",
-        "virus",
-        "infection"
+        "infection",
+        "virus"
       ]
     },
     {
@@ -10454,32 +11385,32 @@
     {
       "text": "researchers may also explore mimicking or modifying the potent isolated bnab or those like it to develop antibody-based hiv therapeutics and prevention tools as well as treatments for other pathogens that have evolved to avoid human antibody responses because the current research indicates that the bovine immune system may typically work quickly to produce effective antibodies against difficult pathogens such as hiv immunizing cattle and discovering such antibodies may become a useful approach t",
       "keywords": [
-        "treatment",
-        "immune"
+        "immune",
+        "treatment"
       ]
     },
     {
       "text": "to read the full report in nature visit http://wwwnaturecom/nature/journal/vaap/ncurrent/full/nature23301html and to see the full press release visit the national institute of allergy and infectious diseases website at https://wwwniaidnihgov/news-events/nih-supported-scientists-elicit-broadly-neutralizing-antibodies-hiv-calves",
       "keywords": [
-        "allergy",
-        "disease"
+        "disease",
+        "allergy"
       ]
     },
     {
       "text": "students say they found the experience rewarding and eye-opening spending my time in brazoria county was such an unforgettable experience i gained so much knowledge in veterinary medicine from my time there said heather cook a fourth-year veterinary student at the cvm the first couple of days i was deployed i worked with small animals because i am focusing on small animal medicine i gained a lot of experience performing physical examinations on dogs and cats coming up with my own diagnoses and t",
       "keywords": [
-        "treatment",
-        "tick",
-        "worm",
         "flea",
-        "heartworm"
+        "heartworm",
+        "worm",
+        "tick",
+        "treatment"
       ]
     },
     {
       "text": "discovery and the unexpectedthese are recurring themes in the research career of dr stephen safe a distinguished professor at the college of veterinary medicine & biomedical sciences (cvm) trained as a chemist safe eventually found himself studying toxicology and examining the biochemical mechanisms of cancer with the hopes of developing effective drug treatments",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
@@ -10493,42 +11424,42 @@
     {
       "text": "excited by the possible health benefits associated with the ah receptor safe began looking for practical solutions to ailments such as pancreatic cancer through partnerships with pharmaceutical companies safe is working toward developing effective drug treatments that would specifically focus on receptors like the ah and nr4a1 receptors to promote pathways that prevent cancer growth weve got a new group of drugs that look like theyre really going to knock your socks off safe said",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "safes interest in the ah receptor has stimulated an interest in other receptors such as nr4a1 which safe and his colleagues are investigating for the treatment of multiple cancers including rhabdomyosarcomaa devastating childrens cancer we think the ah and nr4a1 receptors are really important in cancer and weve been developing drugs that target them through different pathways he said",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "dr noah cohen professor and associate department head for research and graduate studies in the department of large animal clinical sciences at the texas a&m college of veterinary medicine & biomedical sciences (cvm) is leading the search for an effective strategy to prevent diseases caused by rhodococcus equi (r equi) a bacterium that commonly causes diseases like pneumonia in foals and in humans and animals with suppressed immune systems",
       "keywords": [
+        "immune",
         "clinical",
         "pneumonia",
-        "immune",
         "disease"
       ]
     },
     {
       "text": "r equi may not always cause disease in an infected animal but when it does pneumonia is most often the disease that develops r equi frequently infects the lungs of foals causing severe symptoms such as fever and coughing which can potentially lead to death in addition to disease in the lungs r equi can affect bones kidneys the intestinal tract and other parts of the body",
       "keywords": [
-        "pneumonia",
-        "symptom",
-        "kidney",
         "fever",
-        "disease"
+        "pneumonia",
+        "kidney",
+        "disease",
+        "symptom"
       ]
     },
     {
       "text": "to combat this potentially deadly pathogen clinician-scientists like cohen are working to develop strategies other than antibiotics that stimulate the patients immune system to help protect them from infection",
       "keywords": [
         "immune",
-        "infection",
-        "antibiotic"
+        "antibiotic",
+        "infection"
       ]
     },
     {
@@ -10542,61 +11473,61 @@
       "text": "treating pneumonia caused by r equi can be difficult because treatment is lengthy expensive must be administered multiple times daily can cause serious side-effects and isnt always effective this is why martens began working on ways to decrease foals susceptibility to developing disease from the bacteria",
       "keywords": [
         "pneumonia",
-        "treatment",
         "bacteria",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "on breeding farms pneumonia caused by r equi is the most common and severe form of pneumonia in foals that are between the ages of one and six months pneumonia is a leading cause of disease and death for foals which has motivated researchers like martens and cohen to seek an effective preventative strategy against pneumonia caused by r equi a vaccine to directly prevent the disease would be a major breakthrough for the health of foals on breeding farms according to cohen",
       "keywords": [
-        "pneumonia",
         "vaccine",
+        "pneumonia",
         "disease"
       ]
     },
     {
       "text": "martens recognized the prevalence of r equi in foals and knew the importance of preventing r equi–related diseases especially pneumonia martens biggest contribution to the prevention of r equi disease was the use of hyperimmune plasma which is harvested from the blood of horses that were vaccinated to produce high concentrations of antibodies againstr equi the plasma is then transfused to foals these transfusions partially protect foals against infection with requi",
       "keywords": [
-        "pneumonia",
         "immune",
         "infection",
+        "pneumonia",
         "disease"
       ]
     },
     {
       "text": "the collection and transfusion of plasma that is hyperimmune against r equi remains the only acceptable and commercially available approach for preventing r equi pneumonia cohen said unfortunately it is not completely effective and has some other limitations such as being expensive labor-intensive to administer and carrying some health risks for foals although the concept of preventing the disease by administering antibiotics has been demonstrated to be effective this approach isnt acceptable be",
       "keywords": [
-        "pneumonia",
         "immune",
         "antibiotic",
+        "pneumonia",
         "disease"
       ]
     },
     {
       "text": "martens was also interested in identifying alternatives to traditional antibiotics to control r equi pneumonia because of emerging resistance to drugs commonly used to treat the disease when martens retired he passed on the directorship of the eidl to cohen",
       "keywords": [
-        "pneumonia",
         "antibiotic",
+        "pneumonia",
         "disease"
       ]
     },
     {
       "text": "exploring alternative treatments of r equi pneumonia as opposed to traditional antimicrobial drugs remains an area of interest for the eidl we are working on two strategies for preventing r equi pneumonia based on having the patients immune system protect them from infection rather than antibiotics cohen said first we are working on developing a vaccine which is a traditional and effective approach for preventing infections second in collaboration with investigators from the texas a&m university",
       "keywords": [
-        "pneumonia",
         "vaccine",
-        "treatment",
         "immune",
-        "infection"
+        "antibiotic",
+        "infection",
+        "pneumonia"
       ]
     },
     {
       "text": "to reduce the risk of antibiotic resistance cohen and his team are investigating new drugs and potential methods of administering preventative and therapeutic agents after over five years of trying cohen and his team at the cvm have produced encouraging results with a vaccine for r equi pneumonia in foals",
       "keywords": [
-        "pneumonia",
         "vaccine",
-        "antibiotic"
+        "antibiotic",
+        "pneumonia"
       ]
     },
     {
@@ -10610,19 +11541,19 @@
       "text": "the one health initiative which stresses the connection between animal health human health and the environment is an integral part of cohens research although our hearts and minds are committed to improving equine health we are very much engaged in the one health initiative with our activities he said developing new types of antibiotics and vaccines that can reduce the need for antibiotics is important for equine and human health because bacterial diseases remain important causes of disease for",
       "keywords": [
         "vaccine",
-        "bacteria",
         "antibiotic",
+        "bacteria",
         "disease"
       ]
     },
     {
       "text": "before retirement from the cvm cohen hopes to develop a vaccine to control r equi pneumonia because it is of global importance he would like to help shift the emphasis of treating infectious bacterial disease with antibiotics to methods that help the patients immune response protect them against infection this is of utmost importance because bacteria are rapidly developing resistance to antibiotic treatment",
       "keywords": [
-        "pneumonia",
         "vaccine",
-        "treatment",
         "immune",
-        "bacteria"
+        "antibiotic",
+        "infection",
+        "pneumonia"
       ]
     },
     {
@@ -10649,42 +11580,42 @@
     {
       "text": "understanding function means understanding how the microbiome influences disease processes and what a healthyor unhealthymicrobiome looks like this means being able to understand the root causes of and contributors to various illnesses including inflammatory bowel syndrome (ibd) obesity and diabetes we now have diagnostic tests that can help veterinarians pinpoint a disease process in the microbiome suchodolski said",
       "keywords": [
-        "diabetes",
-        "obesity",
         "veterinarian",
-        "disease"
+        "obesity",
+        "disease",
+        "diabetes"
       ]
     },
     {
       "text": "suchodolski is particularly interested in bile acids including how they are metabolized and how they interact with bacteria to aid in digestion the reason thats important for our research is that bacteria actually transform the bile acids in a physiological way normally so-called primary bile acids are converted into secondary bile acids by bacteria this perfect ratio of secondary bile acids to primary bile is really crucial to maintaining health when you have a change in the microbiome for what",
       "keywords": [
-        "diabetes",
         "obesity",
+        "antibiotic",
         "inflammation",
         "bacteria",
-        "antibiotic"
+        "disease"
       ]
     },
     {
       "text": "although the microbiome is a completely new world with much left to explore diagnostic tests that examine the relative abundances of certain microbial groups have already been developed the bile acids that were focusing on which are measured in fecal material are part of the next big test that were going to start offering thats going to be really useful for diagnosis and treatment it could also be a nice monitoring tool for the progression of disease",
       "keywords": [
         "diagnosis",
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "it can be difficult to characterize an entire ecosystem in a single lab test but suchodolski and his team have helped to make it possible what was previously a cumbersome test to interpret which included multiple values reflecting the microbes present suchodolski and his colleagues have reduced to a single value for the veterinarian to interpret before veterinarians ran tests to look at all those bacteria groups separately and they got this huge printout suchodolski said it was very difficult fo",
       "keywords": [
-        "bacteria",
-        "veterinarian"
+        "veterinarian",
+        "bacteria"
       ]
     },
     {
       "text": "in studying a whole new microcosm the potential for discovery seems endless theres a lot of work to be done in the future suchodolski said there are so many other components that we never even thought about a few of those possibilities include leveraging the microbiome during treatment illnesses caused by microbial imbalance such as those using antibiotics could be treated by transplanting healthy microbiota into the gi tract of the patient to jump start the guts health",
       "keywords": [
-        "treatment",
-        "antibiotic"
+        "antibiotic",
+        "treatment"
       ]
     },
     {
@@ -10697,8 +11628,8 @@
     {
       "text": "bovine respiratory disease is the most common and costly disease affecting the north american cattle industry not all cattle respond to bovine respiratory pathogens the same and were trying to develop a dna chip where a little bit of dna can determine the relative susceptibility or resistance of a particular animal to respiratory disease womack said",
       "keywords": [
-        "respiratory",
-        "disease"
+        "disease",
+        "respiratory"
       ]
     },
     {
@@ -10711,8 +11642,8 @@
     {
       "text": "prostaglandins are critical hormones required for estrous cycle and establishment of pregnancy in cows and sheep and other ruminants prostaglandins are central inflammatory mediators arosh said they play a major role in inflammation of several diseases they can have a beneficial role in reproductive biology but they can also have very adverse effects prostaglandin pathways have been targeted by drugs like nsaidsaspirin ibuprofen tylenolfor more than 100 years to decrease pain and inflammation in",
       "keywords": [
-        "inflammation",
         "pain",
+        "inflammation",
         "disease"
       ]
     },
@@ -10733,24 +11664,24 @@
     {
       "text": "the therapy arosh is working on inhibits the pge2 receptors thus making pge2 ineffective the lesions are less likely to grow and survive formation of the blood vessels needed to nourish and supply blood to the lesions is suppressed neurons that cause pelvic pain are decreased inflammation is reduced and fertility is restored",
       "keywords": [
-        "inflammation",
-        "pain"
+        "pain",
+        "inflammation"
       ]
     },
     {
       "text": "further arosh noted that the benefits go beyond endometriosis when this medication is available it will not only treat endometriosis he said it would be useful for most of the inflammatory diseasesrheumatoid arthritis inflammatory bowel syndrome and inflammatory cancers such as colon cancer and breast cancer also we could use this treatment across species at present no drugs are available to target these ep2 and ep4 receptors in human or veterinary medicine",
       "keywords": [
-        "treatment",
-        "arthritis",
         "cancer",
-        "disease"
+        "arthritis",
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "but hexavalent chromiums effects have only been studied in some organs such as the liver and kidneys therefore she developed her novel research to understand the effects of chromium in the unknown areas of the field namely in female reproduction and fetal development",
       "keywords": [
-        "liver",
-        "kidney"
+        "kidney",
+        "liver"
       ]
     },
     {
@@ -10763,23 +11694,23 @@
     {
       "text": "tori whitaker a content specialist with peer echoed this and said its not easy to talk about obesity with middle school students which is why we try to relate issues such as diabetes and obesity to pets our work really fits nicely into the one health initiative the link between human and animal health and the environment and thats a lot of fun",
       "keywords": [
-        "diabetes",
-        "obesity"
+        "obesity",
+        "diabetes"
       ]
     },
     {
       "text": "presentations can take a variety of forms and one example is panel presentations peer has hosted a panel of veterinary students who discussed their journey to veterinary school the panel went through different personal histories of how they were admitted into veterinary school johnson said for example one veterinary student said that her dog had an infection and the veterinarian was using one antibiotic the dog wasnt getting better and so she read there was another antibiotic that might work in",
       "keywords": [
-        "infection",
         "veterinarian",
-        "antibiotic"
+        "antibiotic",
+        "infection"
       ]
     },
     {
       "text": "dr cook is truly an innovative educator who excels at teaching professional students post-graduate trainees and veterinarians in clinical practice said dr jonathan levine department head professor and helen mcwhorter chair in small animal clinical sciences",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
@@ -10792,8 +11723,8 @@
     {
       "text": "we are entering an incredibly exciting time for our profession said dr adam little director of veterinary innovation and entrepreneurship at texas a&m university the acceleration of technologies–such as artificial intelligence the internet of things biotechnology genomics big data and ubiquitous computing–present veterinarians with the opportunity to deliver more personalized accessible and ultimately impactful care to all species and stakeholders",
       "keywords": [
-        "liver",
-        "veterinarian"
+        "veterinarian",
+        "liver"
       ]
     },
     {
@@ -10806,8 +11737,8 @@
     {
       "text": "the texas a&m ophthalmology services plans also include expanding research we have a study that will be starting soon scott said were looking at pain management in dogs that have their eyes removed for ocular disease and well be collaborating with the anesthesiology service for that study i know dr vallone is working on identifying a new structure in the horse third eyelid that has never been described before we have many different projects in the mix right now theyre all in their infancy but in",
       "keywords": [
-        "clinical",
         "pain",
+        "clinical",
         "disease"
       ]
     },
@@ -10821,39 +11752,39 @@
     {
       "text": "after receiving his dvm dr crawford served as a congressional fellow for the american association for the advancement of sciences (aaas) and worked in the office of united states senator al franken (d-mn) helping to advance the senators global health agriculture and energy initiatives while working in the senators office dr crawford advocated for the essential roles of veterinarians and wildlife biologists in controlling and preventing zoonotic diseases in particular the ebola virus outbreak in",
       "keywords": [
-        "virus",
         "veterinarian",
-        "disease"
+        "disease",
+        "virus"
       ]
     },
     {
       "text": "currently dr crawford serves as a program health analyst at the national institute of allergy and infectious diseases dr crawford continues to champion the importance of one health and the roles of veterinarians to the community thereby fostering understanding and bringing global visibility to the one health concept",
       "keywords": [
         "veterinarian",
-        "allergy",
-        "disease"
+        "disease",
+        "allergy"
       ]
     },
     {
       "text": "with research published in peer-reviewed journals including the journal of veterinary internal medicine dr fenner maintains an interest in all aspects of small animal neurology with particular interest in the management of canine seizures he has been the principal investigator of several clinical studies focused on the treatment of epilepsy and the response of the nervous system to inflammation (encephalitis) in addition he is the principle editor and a contributor for all three editions of quic",
       "keywords": [
         "clinical",
-        "treatment",
-        "inflammation"
+        "inflammation",
+        "treatment"
       ]
     },
     {
       "text": "he also is an active proponent in the community serving as a member of leadership plano class 32 a program of the plano chamber of commerce dedicated to educating developing and empowering current and future leaders he is currently on the childrens advocacy board in collin county the texas hospital association policy council and is a member of the biomedical sciences advisory council here at texas a&m in addition floren was on the advisory board for the american diabetes association and the amer",
       "keywords": [
-        "diabetes",
-        "cancer"
+        "cancer",
+        "diabetes"
       ]
     },
     {
       "text": "because of his extensive research and clinical trials experience dr lewis co-founded the veterinary research associates pllc (vra) a group of beef cattle veterinarians who provide feedlot clients cost-efficient methods to decrease disease increase productivity for their cattle and foster a centralized cooperative to conduct field trial research the vra partners have consulted for more than 75 feed yards which represent more than 6 million head of cattle annually",
       "keywords": [
-        "clinical",
         "veterinarian",
+        "clinical",
         "disease"
       ]
     },
@@ -10867,8 +11798,8 @@
     {
       "text": "dr cook is truly an innovative educator who excels at teaching professional students post-graduate trainees and veterinarians in clinical practice said dr jonathan levine department head professor and helen mcwhorter chair in small animal clinical sciences",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
@@ -10881,31 +11812,31 @@
     {
       "text": "in addition to balancing her attention between the distinctive worlds of primary care and the er eckman also teaches veterinary students and interns in clinical and classroom settings this level of multitasking can be a challenge but it is something in which eckman excels in fact she flourishes at this level of multitasking her versatility makes her an asset as both a veterinarian and a professor",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
       "text": "through her role as veterinarian in the primary care service eckman mentors fourth-year veterinary students who are practicing their clinical skills and preparing to enter the profession were there for support but we want them to truly be the doctors she said they can spread their wings and make a decision about something but still have the luxury of referring back to us and asking ‘is that ok should i do that'",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
       "text": "the emergency and critical care service is a fully functional service with the capabilities of the entire hospital and has a veterinarian and support staff in the hospital to receive patients 24 hours a day the service provides ongoing care for critically ill or injured pets as well as those recovering from surgery the emergency service also provides immediate initial evaluation stabilization and treatment for ill or injured pets",
       "keywords": [
-        "treatment",
         "veterinarian",
+        "emergency",
         "surgery",
-        "emergency"
+        "treatment"
       ]
     },
     {
       "text": "the event included the latest in teaching technology and investment in the future of the college and veterinary students daytime lectures workshops and trade show demonstrations were held in the vbec state-of-the-art teaching and clinical facility for the ultimate learning experience more than 150 veterinary students and nearly 400 veterinarians assembled to perform the business of the organization acquire and expand their knowledge base and skill set and grow closer as a veterinary community th",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
@@ -10932,15 +11863,15 @@
     {
       "text": "lis goal is to create a treatment for cancer using dim analogs that is less toxic to humans than current chemotherapy treatments",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "for cancer treatment in the future i think this could be a really good option li said",
       "keywords": [
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
@@ -10981,8 +11912,8 @@
     {
       "text": "upper airway diseasedr canaan whitfieldassistant professor of large animal surgery",
       "keywords": [
-        "surgery",
-        "disease"
+        "disease",
+        "surgery"
       ]
     },
     {
@@ -10997,17 +11928,17 @@
     {
       "text": "this particular type of brain inflammation we treat in dogs has many similarities with multiple sclerosis (ms) in people jeffery said so any parallels between the diseases might be useful in understanding causes and developing new treatments",
       "keywords": [
-        "treatment",
         "inflammation",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "through his research jeffery found that the lack of a specific type of gut bacteria was associated with brain inflammation in dogs this means investigations into changing the gut bacteria in dogs might also help with treatment of ms in people",
       "keywords": [
-        "treatment",
         "inflammation",
-        "bacteria"
+        "bacteria",
+        "treatment"
       ]
     },
     {
@@ -11027,23 +11958,23 @@
     {
       "text": "jeann leal de araujo won the second place young investigator award in the experimental disease category for a poster titled from nerves to brain: a time-based study of psittaciform 1 bornavirus (pabv) pathogenesis in cockatiels (nymphicus hollandicus)",
       "keywords": [
-        "virus",
-        "disease"
+        "disease",
+        "virus"
       ]
     },
     {
       "text": "long before his days as department head of the large animal clinical sciences (vlcs) department at the college of veterinary medicine & biomedical sciences (cvm) dr allen roussel was simply a young man fascinated by animals when i was growing up we had cats and one old hunting dog so thats what got me interested in veterinary medicine said roussel coming from a family focused on human medicine-his father worked in the medical department of an oil company and his mother was a nurse-roussels decis",
       "keywords": [
-        "clinical",
-        "veterinarian"
+        "veterinarian",
+        "clinical"
       ]
     },
     {
       "text": "clara a second-year veterinary student was mentored by dr raquel rech (https://vetmedtamuedu/vtpb/directorydetailuserid=12806) a clinical assistant professor in the department of veterinary pathobiology at texas a&m university claras research will ultimately impact the creation of a pig model to study environmental enteropathy a gastrointestinal (gi) disease in humans i worked to determine what tissue fixative best preserved the mucous layer of the colon in pig colonic samples clara explained ab",
       "keywords": [
         "clinical",
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
@@ -11063,128 +11994,762 @@
     {
       "text": "college station texas – mitral valve disease (mvd) accounts for approximately 75 percent of all canine heart disease however a recent global clinical trial led by a texas a&m university veterinarian was published in the journal of veterinary internal medicine (sept 2016) and shows that early treatment can slow progression of the disease prolonging overall survival and helping patients remain symptom free for longer",
       "keywords": [
-        "clinical",
-        "treatment",
-        "symptom",
         "veterinarian",
-        "disease"
+        "clinical",
+        "disease",
+        "symptom",
+        "treatment"
       ]
     },
     {
       "text": "the trial titled effect of pimobendan in dogs with preclinical myxomatous mitral valve disease (mmvd) and cardiomegaly (epic) is the largest clinical study ever to be conducted in veterinary cardiology the trial found pimobendan a drug treatment is effective in delaying the onset of clinical signs for an average of 15 months in dogs with increased heart size secondary to preclinical mmvd",
       "keywords": [
         "clinical",
-        "treatment",
-        "disease"
+        "disease",
+        "treatment"
       ]
     },
     {
       "text": "i am excited about the results of this groundbreaking study and proud to be a part of the epic team said dr sonya gordon associate professor at the texas a&m college of veterinary medicine & biomedical science and a lead investigator in the epic clinical study the results of this clinical trial will change the way the most common cause of heart disease and heart failure in the dog is managed on a day-to-day basis by veterinarians around the world and contribute to dogs with mmvd living better an",
       "keywords": [
-        "clinical",
         "veterinarian",
+        "clinical",
         "disease"
       ]
     },
     {
       "text": "epic was an international effort run by specialized veterinary cardiologists at 36 clinical trial centers half of the trial centers were in the united states while the other 18 centers were in australia canada france germany italy japan the netherlands spain sweden and the united kingdom the 360 canine patients enrolled in the trial randomly received pimobendan or a placebo with 180 dogs in each group gordon and her colleagues at texas a&m treated 16 of those dogs",
       "keywords": [
-        "clinical",
-        "pain"
+        "pain",
+        "clinical"
       ]
     },
     {
       "text": "these findings will allow veterinarians to offer pimobendan as a treatment for dogs with heart enlargement as a consequence of mmvd to delay congestive heart failure and prolong survival thanks to the epic study results vets no longer have to adopt a ‘watch and wait approach to suspected preclinical cases of mvd when a typical mitral valve murmur is detected vets should now investigate further to look for cardiac enlargement if demonstrated this suggests the patient will probably benefit from tr",
       "keywords": [
+        "veterinarian",
         "clinical",
-        "treatment",
-        "veterinarian"
+        "treatment"
       ]
     },
     {
       "text": "veterinarians at the texas a&m college of veterinary medicine & biomedical sciences (cvm) serve on the front lines of the war on cancer some of their discoveries not only save beloved pets lives but also offer hope for treating cancer in humans as the fastest growing disease on earth cancer has been the focus of a national war proclaimed by every united states president since richard m nixon by 2030 experts believe there will be 22 million cases of cancer in humans worldwide",
       "keywords": [
-        "cancer",
         "veterinarian",
+        "cancer",
         "disease"
       ]
     },
     {
       "text": "as a pioneer in animal oncology dr claudia barton a cvm professor in the department of small animal clinical sciences (vscs) has seen the field go through monumental changes during the past 40 years soon after her arrival at texas a&m university in 1976 barton remembers a retiring veterinarian handing her multiple boxes of kodachromes or slides of cancer tumors the only treatment that anybody had done at that time on animals with cancer was surgery that was about all there was she said",
       "keywords": [
-        "clinical",
-        "treatment",
-        "cancer",
         "veterinarian",
-        "surgery"
+        "clinical",
+        "cancer",
+        "surgery",
+        "treatment"
       ]
     },
     {
       "text": "during these early years of treatment options and while chemotherapy drugs were still in their infancy cvm researchers found radiation therapy to be a useful procedure when surgery wasnt an option as chemotherapy advanced a few drugs were developed but our veterinarians didnt have access to them barton said most of the drugs that we use today became available for veterinary medical use after i began my career in oncology",
       "keywords": [
-        "treatment",
         "veterinarian",
-        "surgery"
+        "surgery",
+        "treatment"
       ]
     },
     {
       "text": "these various scans provide important information to veterinarians as they diagnose and treat cancer for instance cvm veterinarians can use ct scans to combine x-ray images taken from different angles and then create cross-sectional images of bones blood vessels and soft tissues of an animals body through computer analysis an mri scan uses a strong magnetic field and radio waves to create detailed images of the animals organs and tissues pet-ct scans the latest imaging technology allow researche",
       "keywords": [
-        "treatment",
+        "veterinarian",
         "cancer",
-        "veterinarian"
+        "treatment"
       ]
     },
     {
       "text": "barton believes advancing technology will open the way to new discoveries and better treatments well be able to see finally tiny little foci of tumor cells that we cant appreciate now because they are just too small to visualize she said i think well even become more sophisticated in our ability to see where tumors are located and then to make the decision about whether you want to put an animal through treatment maybe youre not going to want to put your animal through radiation therapy for its",
       "keywords": [
         "clinical",
-        "treatment",
-        "cancer"
+        "cancer",
+        "treatment"
       ]
     },
     {
       "text": "todays cvm veterinarians are also more sophisticated in their knowledge of the different types of cancer its amazing to me that we used to make sweeping generalizations about cancers that were good and cancers that were bad with so little knowledge barton said every day we advance our knowledge about the biologic behavior of these tumors related to molecular diagnostics that we had no idea about what we do regularly today would have been considered something akin to star wars in those days our m",
       "keywords": [
-        "cancer",
-        "veterinarian"
+        "veterinarian",
+        "cancer"
       ]
     },
     {
       "text": "researchers also study human cancers to identify potential treatments for animals when faced with an animal that has an unusual form of cancer barton and other cvm research faculty and veterinarians often delve into the national cancer institutes database ill first start by going to cancergov and i will think ‘okay if this dog with this stage of this cancer were a human what would they be doing for that human' barton said can we do that or is it too painful too difficult too technically beyond o",
       "keywords": [
-        "treatment",
         "pain",
+        "veterinarian",
         "cancer",
-        "veterinarian"
+        "treatment"
       ]
     },
     {
       "text": "while cvm veterinarians and researchers strive to find new treatments they also realize that some animals are not good candidates for therapy therefore they try to help pet owners think through the ramifications and consequences of their healthcare decisions one of the things that we always have to think about is that the dog or cat or horse is not choosing this for themselves barton said they dont wake up in the morning and say ‘i have to make it to christmas i have to make it to my childs coll",
       "keywords": [
-        "treatment",
-        "veterinarian"
+        "veterinarian",
+        "treatment"
       ]
     },
     {
       "text": "oncology in both humans and animals has made tremendous strides over the past 40 years and more breakthroughs are on the horizon barton believes that the future of cancer treatments in humans-and eventually animals-will be personalized medicine it will be beyond my practice career and probably beyond my life but they will biopsy a human tumor and they will find the cancer genome and then they will figure out what kinds of targeted molecular therapies will be available based on the genetics she e",
       "keywords": [
-        "treatment",
         "cancer",
-        "disease"
+        "disease",
+        "treatment"
       ]
     }
   ],
+  "vetcare_pro": [
+    {
+      "input": "my dog is limping and won't put weight on its leg",
+      "response": "Possible injury. Limit movement and avoid walking muna. Bring your dog to the clinic ASAP for X-ray.",
+      "animal": "dog",
+      "category": "injury",
+      "severity": "high",
+      "diagnosis": "Sprain or fracture",
+      "treatment": "Immobilization, pain relief meds, possible surgery"
+    },
+    {
+      "input": "my cat fell from a high place and is not moving much",
+      "response": "This is serious. Keep your cat warm and still. Dalhin agad sa vet for emergency check.",
+      "animal": "cat",
+      "category": "injury",
+      "severity": "high",
+      "diagnosis": "Internal injury or fracture",
+      "treatment": "Emergency care, imaging, surgery if needed"
+    },
+    {
+      "input": "my bird broke its wing and cannot fly",
+      "response": "Do not force movement. I-place muna sa cage to prevent stress. Visit vet immediately.",
+      "animal": "bird",
+      "category": "injury",
+      "severity": "high",
+      "diagnosis": "Wing fracture",
+      "treatment": "Wing splinting, rest, supportive care"
+    },
+    {
+      "input": "my fish keeps flipping upside down",
+      "response": "Check water quality agad. Possible swim bladder issue. Change water and observe.",
+      "animal": "fish",
+      "category": "behavior",
+      "severity": "medium",
+      "diagnosis": "Swim bladder disorder",
+      "treatment": "Water treatment, diet adjustment"
+    },
+    {
+      "input": "my dog is vomiting and has diarrhea",
+      "response": "Possible infection or food poisoning. Stop feeding muna for a few hours and provide water. Vet visit recommended.",
+      "animal": "dog",
+      "category": "digestion",
+      "severity": "high",
+      "diagnosis": "Gastroenteritis",
+      "treatment": "Fluid therapy, antibiotics, diet control"
+    },
+    {
+      "input": "my cat has not eaten for two days",
+      "response": "This is dangerous for cats. Kailangan na ng vet check immediately.",
+      "animal": "cat",
+      "category": "digestion",
+      "severity": "high",
+      "diagnosis": "Anorexia or underlying illness",
+      "treatment": "Appetite stimulants, lab tests"
+    },
+    {
+      "input": "my dog keeps scratching and losing fur",
+      "response": "Possible allergy or parasites. Check for fleas/ticks. Vet consultation advised.",
+      "animal": "dog",
+      "category": "skin",
+      "severity": "medium",
+      "diagnosis": "Allergic dermatitis",
+      "treatment": "Anti-allergy meds, parasite control"
+    },
+    {
+      "input": "my cat has discharge coming from its eyes",
+      "response": "Clean gently with saline. If tuloy-tuloy, consult vet.",
+      "animal": "cat",
+      "category": "eyes",
+      "severity": "medium",
+      "diagnosis": "Eye infection",
+      "treatment": "Eye drops, antibiotics"
+    },
+    {
+      "input": "my bird is breathing with its beak open",
+      "response": "This is emergency. Birds should not breathe like this. Dalhin agad sa vet.",
+      "animal": "bird",
+      "category": "respiratory",
+      "severity": "high",
+      "diagnosis": "Respiratory infection",
+      "treatment": "Oxygen support, antibiotics"
+    },
+    {
+      "input": "my dog ate chocolate",
+      "response": "Chocolate is toxic. Go to vet immediately. Do not wait.",
+      "animal": "dog",
+      "category": "poisoning",
+      "severity": "high",
+      "diagnosis": "Chocolate poisoning",
+      "treatment": "Induced vomiting, activated charcoal"
+    },
+    {
+      "input": "my cat is having difficulty urinating",
+      "response": "Emergency ito. Possible blockage. Bring to vet ASAP.",
+      "animal": "cat",
+      "category": "urinary",
+      "severity": "high",
+      "diagnosis": "Urinary blockage",
+      "treatment": "Catheterization, medication"
+    },
+    {
+      "input": "my dog keeps shaking its head and scratching ears",
+      "response": "Possible ear infection. Avoid cleaning deeply. Vet check recommended.",
+      "animal": "dog",
+      "category": "ear",
+      "severity": "medium",
+      "diagnosis": "Otitis externa",
+      "treatment": "Ear drops, cleaning solution"
+    },
+    {
+      "input": "my rabbit is not eating and looks weak",
+      "response": "Rabbits must eat continuously. This is urgent. Vet visit needed.",
+      "animal": "rabbit",
+      "category": "digestion",
+      "severity": "high",
+      "diagnosis": "GI stasis",
+      "treatment": "Fluid therapy, syringe feeding"
+    },
+    {
+      "input": "my fish has white spots on its body",
+      "response": "Common ito sa ich disease. Isolate fish and treat water.",
+      "animal": "fish",
+      "category": "health",
+      "severity": "medium",
+      "diagnosis": "Ich infection",
+      "treatment": "Aquarium salt, medication"
+    },
+    {
+      "input": "my dog feels very hot and weak",
+      "response": "Check temperature if possible. Bring to vet immediately.",
+      "animal": "dog",
+      "category": "fever",
+      "severity": "high",
+      "diagnosis": "Fever/infection",
+      "treatment": "Antibiotics, fluids"
+    },
+    {
+      "input": "my cat is sneezing a lot",
+      "response": "Monitor muna. If may discharge or worsening, consult vet.",
+      "animal": "cat",
+      "category": "respiratory",
+      "severity": "low",
+      "diagnosis": "Upper respiratory infection",
+      "treatment": "Supportive care, meds if needed"
+    },
+    {
+      "input": "my dog has a bleeding wound",
+      "response": "Apply pressure to stop bleeding. Dalhin agad sa clinic.",
+      "animal": "dog",
+      "category": "injury",
+      "severity": "high",
+      "diagnosis": "Open wound",
+      "treatment": "Wound cleaning, suturing"
+    },
+    {
+      "input": "my cat is hiding and not socializing",
+      "response": "Observe muna. Could be stress or illness. If persists, consult vet.",
+      "animal": "cat",
+      "category": "behavior",
+      "severity": "low",
+      "diagnosis": "Stress or illness",
+      "treatment": "Behavior monitoring, checkup"
+    },
+    {
+      "input": "my bird is not eating seeds anymore",
+      "response": "Try soft food muna. If tuloy-tuloy, vet check needed.",
+      "animal": "bird",
+      "category": "digestion",
+      "severity": "medium",
+      "diagnosis": "Nutritional deficiency",
+      "treatment": "Diet adjustment, supplements"
+    },
+    {
+      "input": "my dog is having seizures",
+      "response": "Emergency ito. Keep dog safe from injury and go to vet immediately.",
+      "animal": "dog",
+      "category": "neurological",
+      "severity": "critical",
+      "diagnosis": "Seizure disorder",
+      "treatment": "Anti-seizure meds, diagnostics"
+    },
+    {
+      "input": "my dog was hit by a car",
+      "response": "This is a life-threatening emergency. Do not move your dog unnecessarily. Keep them warm and still. Rush to the nearest vet clinic immediately.",
+      "animal": "dog",
+      "category": "injury",
+      "severity": "critical",
+      "diagnosis": "Trauma or internal injury",
+      "treatment": "Emergency stabilization, imaging, surgery"
+    },
+    {
+      "input": "my cat is bleeding from the mouth",
+      "response": "This could indicate internal injury, broken tooth, or ingested sharp object. Keep your cat calm and go to the vet immediately.",
+      "animal": "cat",
+      "category": "injury",
+      "severity": "high",
+      "diagnosis": "Oral injury or internal bleeding",
+      "treatment": "Emergency exam, imaging, wound care"
+    },
+    {
+      "input": "my dog swallowed something sharp",
+      "response": "Do NOT induce vomiting. Sharp objects can cause more damage coming back up. Go to the vet immediately for X-ray.",
+      "animal": "dog",
+      "category": "injury",
+      "severity": "critical",
+      "diagnosis": "Foreign body ingestion",
+      "treatment": "X-ray, endoscopy, possible surgery"
+    },
+    {
+      "input": "my rabbit is not moving at all",
+      "response": "This is very serious. Rabbits hide illness well. Keep warm and rush to vet immediately.",
+      "animal": "rabbit",
+      "category": "emergency",
+      "severity": "critical",
+      "diagnosis": "Shock, GI stasis, or organ failure",
+      "treatment": "Emergency stabilization, fluid therapy"
+    },
+    {
+      "input": "my hamster is cold and unresponsive",
+      "response": "Your hamster may be in torpor (hibernation-like state) or critically ill. Warm slowly with your hands. If no response in 30 min, see vet.",
+      "animal": "hamster",
+      "category": "emergency",
+      "severity": "high",
+      "diagnosis": "Torpor or hypothermia",
+      "treatment": "Gradual warming, supportive care"
+    },
+    {
+      "input": "my dog keeps barking at night",
+      "response": "Night barking can be due to anxiety, boredom, or hearing noises. Ensure exercise during the day and a comfortable sleeping area.",
+      "animal": "dog",
+      "category": "behavior",
+      "severity": "low",
+      "diagnosis": "Anxiety or boredom",
+      "treatment": "Behavior training, enrichment"
+    },
+    {
+      "input": "my cat suddenly became aggressive",
+      "response": "Sudden aggression may indicate pain, stress, or territorial issues. Avoid punishment. Observe for other symptoms and consult vet.",
+      "animal": "cat",
+      "category": "behavior",
+      "severity": "medium",
+      "diagnosis": "Pain, stress, or hormonal",
+      "treatment": "Vet checkup, behavior consultation"
+    },
+    {
+      "input": "my dog is not eating but still active",
+      "response": "If your dog is active but not eating, it may be picky or have mild stomach upset. Monitor for 24 hours. Offer bland food.",
+      "animal": "dog",
+      "category": "behavior",
+      "severity": "low",
+      "diagnosis": "Mild GI upset or pickiness",
+      "treatment": "Monitor, bland diet"
+    },
+    {
+      "input": "my pet is hiding all the time",
+      "response": "Hiding behavior can indicate stress, fear, pain, or illness. Create a safe space and monitor. If it persists, consult your vet.",
+      "animal": "dog",
+      "category": "behavior",
+      "severity": "medium",
+      "diagnosis": "Stress, pain, or illness",
+      "treatment": "Environmental enrichment, vet checkup"
+    },
+    {
+      "input": "my dog is chewing everything",
+      "response": "Chewing is normal in puppies (teething) but in adults may indicate boredom, anxiety, or dental issues. Provide chew toys and exercise.",
+      "animal": "dog",
+      "category": "behavior",
+      "severity": "low",
+      "diagnosis": "Boredom, anxiety, or teething",
+      "treatment": "Chew toys, training, dental check"
+    },
+    {
+      "input": "my cat is not using the litter box",
+      "response": "Litter box avoidance may be due to UTI, stress, dirty litter, or pain. Rule out medical causes first, then check environment.",
+      "animal": "cat",
+      "category": "behavior",
+      "severity": "medium",
+      "diagnosis": "UTI, stress, or territory marking",
+      "treatment": "Vet exam, litter box management"
+    },
+    {
+      "input": "my bird is not flying",
+      "response": "A bird that cannot fly may have a wing injury, illness, or weakness. Keep in a safe cage and consult an avian vet.",
+      "animal": "bird",
+      "category": "injury",
+      "severity": "medium",
+      "diagnosis": "Wing injury or illness",
+      "treatment": "Avian vet exam, rest"
+    },
+    {
+      "input": "my bird is losing feathers",
+      "response": "Feather loss can be molting (normal) or stress/illness-related. Check for bald patches and skin irritation. Consult avian vet.",
+      "animal": "bird",
+      "category": "skin",
+      "severity": "medium",
+      "diagnosis": "Molting, stress, or infection",
+      "treatment": "Avian vet exam, diet review"
+    },
+    {
+      "input": "my bird is not eating",
+      "response": "Birds have fast metabolisms and not eating is dangerous. Offer soft food and consult an avian vet immediately.",
+      "animal": "bird",
+      "category": "digestion",
+      "severity": "high",
+      "diagnosis": "Illness or GI issue",
+      "treatment": "Syringe feeding, avian vet ASAP"
+    },
+    {
+      "input": "my bird has breathing problems",
+      "response": "Open-beak breathing in birds is a SEVERE emergency. Birds hide illness until critical. Rush to avian vet NOW.",
+      "animal": "bird",
+      "category": "respiratory",
+      "severity": "critical",
+      "diagnosis": "Respiratory infection or air sac disease",
+      "treatment": "Oxygen support, antibiotics, emergency care"
+    },
+    {
+      "input": "my fish is staying at the bottom",
+      "response": "Bottom-sitting may indicate stress, illness, or poor water quality. Test water parameters immediately.",
+      "animal": "fish",
+      "category": "behavior",
+      "severity": "medium",
+      "diagnosis": "Stress or water quality issue",
+      "treatment": "Water change, test parameters"
+    },
+    {
+      "input": "my fish has white spots",
+      "response": "White spots are commonly Ichthyophthirius (Ich disease). Isolate affected fish and treat the tank with aquarium salt or medication.",
+      "animal": "fish",
+      "category": "skin",
+      "severity": "medium",
+      "diagnosis": "Ich disease",
+      "treatment": "Aquarium salt, anti-parasitic medication"
+    },
+    {
+      "input": "my fish is not moving",
+      "response": "A fish that is not moving may be critically ill. Check water temperature, pH, and ammonia levels immediately.",
+      "animal": "fish",
+      "category": "behavior",
+      "severity": "high",
+      "diagnosis": "Critical illness or water toxicity",
+      "treatment": "Emergency water change, test parameters"
+    },
+    {
+      "input": "my fish is gasping at the surface",
+      "response": "Gasping at the surface indicates low oxygen or ammonia poisoning. Do an immediate partial water change and add an air pump.",
+      "animal": "fish",
+      "category": "respiratory",
+      "severity": "high",
+      "diagnosis": "Low oxygen or ammonia poisoning",
+      "treatment": "Water change, aeration"
+    },
+    {
+      "input": "my dog has ticks",
+      "response": "Remove visible ticks carefully with tweezers (grasp close to skin). Use vet-approved tick prevention product. Check for tick-borne diseases.",
+      "animal": "dog",
+      "category": "skin",
+      "severity": "medium",
+      "diagnosis": "Tick infestation",
+      "treatment": "Tick removal, preventive treatment"
+    },
+    {
+      "input": "my dog has swollen eyes",
+      "response": "Swollen eyes could be an allergic reaction, infection, or injury. Clean gently. If swelling worsens, visit the vet.",
+      "animal": "dog",
+      "category": "eyes",
+      "severity": "medium",
+      "diagnosis": "Allergy or infection",
+      "treatment": "Anti-histamines (vet-prescribed), exam"
+    },
+    {
+      "input": "my cat has hair loss",
+      "response": "Hair loss in cats can be from over-grooming (stress), allergies, ringworm, or parasites. Check for patterns and see vet.",
+      "animal": "cat",
+      "category": "skin",
+      "severity": "medium",
+      "diagnosis": "Stress, allergy, or ringworm",
+      "treatment": "Vet exam, skin scraping test"
+    },
+    {
+      "input": "my cat is vomiting hairballs",
+      "response": "Occasional hairballs are normal for cats. If frequent, try a hairball-prevention diet and regular brushing. See vet if daily.",
+      "animal": "cat",
+      "category": "digestion",
+      "severity": "low",
+      "diagnosis": "Normal grooming or GI issue",
+      "treatment": "Hairball diet, brushing"
+    },
+    {
+      "input": "my cat is breathing fast",
+      "response": "Rapid breathing in cats is concerning. Could be respiratory infection, heart disease, or pain. Keep calm and see vet today.",
+      "animal": "cat",
+      "category": "respiratory",
+      "severity": "high",
+      "diagnosis": "Heart disease or respiratory infection",
+      "treatment": "Vet exam, chest X-ray"
+    },
+    {
+      "input": "my cat has fleas",
+      "response": "Fleas cause itching and can transmit diseases. Use vet-approved flea treatment on ALL pets. Wash bedding in hot water.",
+      "animal": "cat",
+      "category": "skin",
+      "severity": "medium",
+      "diagnosis": "Flea infestation",
+      "treatment": "Flea treatment, environmental cleaning"
+    },
+    {
+      "input": "when should my pet get vaccinated?",
+      "response": "Puppies/kittens start vaccines at 6-8 weeks. Adult pets need annual boosters. Ask your vet for a personalized schedule.",
+      "animal": "general",
+      "category": "vaccination",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Consult vet for schedule"
+    },
+    {
+      "input": "what vaccines does my dog need?",
+      "response": "Core vaccines for dogs: Rabies, Distemper, Parvovirus, Hepatitis. Non-core: Bordetella, Leptospirosis. Your vet will advise based on lifestyle.",
+      "animal": "dog",
+      "category": "vaccination",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Consult vet"
+    },
+    {
+      "input": "is my pet due for vaccination?",
+      "response": "Check your pet's vaccination card or ask your vet. Generally, vaccines are given annually or every 3 years depending on type.",
+      "animal": "general",
+      "category": "vaccination",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Vet consultation"
+    },
+    {
+      "input": "how often should i deworm my pet?",
+      "response": "Puppies/kittens: every 2-4 weeks until 12 weeks, then monthly until 6 months. Adults: every 3-6 months.",
+      "animal": "general",
+      "category": "vaccination",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Deworming medication"
+    },
+    {
+      "input": "do indoor cats need vaccines?",
+      "response": "Yes! Indoor cats still need core vaccines (Rabies, FVRCP). They can be exposed through windows, visitors, or escaped moments.",
+      "animal": "cat",
+      "category": "vaccination",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Core vaccine series"
+    },
+    {
+      "input": "what should i feed my dog?",
+      "response": "Feed age-appropriate commercial dog food. Puppies need puppy formula, adults need adult food. Avoid table scraps and toxic foods.",
+      "animal": "dog",
+      "category": "nutrition",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Quality commercial diet"
+    },
+    {
+      "input": "can my cat eat human food?",
+      "response": "Most human food is not suitable for cats. Avoid onions, garlic, chocolate, grapes, and dairy. Plain cooked chicken or fish is okay in small amounts.",
+      "animal": "cat",
+      "category": "nutrition",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Cat-appropriate diet"
+    },
+    {
+      "input": "is chocolate dangerous for dogs?",
+      "response": "YES. Chocolate is TOXIC to dogs. Dark chocolate is most dangerous. If ingested, go to the vet IMMEDIATELY. Do not wait for symptoms.",
+      "animal": "dog",
+      "category": "nutrition",
+      "severity": "high",
+      "diagnosis": "Chocolate toxicity",
+      "treatment": "Induced vomiting, activated charcoal, emergency care"
+    },
+    {
+      "input": "what food is safe for birds?",
+      "response": "Safe foods: seeds, pellets, fruits (apple, banana), vegetables (carrot, broccoli). Avoid avocado, chocolate, caffeine, and alcohol.",
+      "animal": "bird",
+      "category": "nutrition",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Balanced pellet-based diet"
+    },
+    {
+      "input": "how often should i feed my pet?",
+      "response": "Puppies: 3-4 times/day. Adult dogs: 2 times/day. Kittens: 3-4 times/day. Adult cats: 2 times/day. Always provide fresh water.",
+      "animal": "general",
+      "category": "nutrition",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Regular feeding schedule"
+    },
+    {
+      "input": "is my dog pregnant?",
+      "response": "Signs of pregnancy: enlarged belly, increased appetite, nesting behavior. A vet can confirm via ultrasound after 25 days.",
+      "animal": "general",
+      "category": "reproduction",
+      "severity": "medium",
+      "diagnosis": "Possible pregnancy",
+      "treatment": "Vet ultrasound confirmation"
+    },
+    {
+      "input": "how long is pet pregnancy?",
+      "response": "Dogs: approximately 63 days (9 weeks). Cats: approximately 63-65 days. Rabbits: 28-33 days.",
+      "animal": "general",
+      "category": "reproduction",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Prenatal vet care"
+    },
+    {
+      "input": "my pet is in heat, what should i do?",
+      "response": "Keep your pet indoors and away from other animals. Use pet diapers if needed. Consider spaying/neutering to prevent unwanted pregnancies.",
+      "animal": "general",
+      "category": "reproduction",
+      "severity": "medium",
+      "diagnosis": "Normal reproductive cycle",
+      "treatment": "Spaying/neutering consultation"
+    },
+    {
+      "input": "when should i spay or neuter my pet?",
+      "response": "Generally recommended at 6 months of age. Discuss timing with your vet based on breed and health status.",
+      "animal": "general",
+      "category": "reproduction",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Vet consultation for surgery schedule"
+    },
+    {
+      "input": "can i reschedule my appointment?",
+      "response": "Yes! Log in to your VetSync account, go to Dashboard, and click 'Manage Appointments' to reschedule or cancel.",
+      "animal": "general",
+      "category": "clinic",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Use dashboard"
+    },
+    {
+      "input": "how much is a consultation?",
+      "response": "Consultation fees vary by service. Please contact our clinic at (02) 8123-4567 or check the booking page for current pricing.",
+      "animal": "general",
+      "category": "clinic",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Call clinic or check website"
+    },
+    {
+      "input": "is the clinic open today?",
+      "response": "VetSync Clinic is open Monday-Saturday, 8:00 AM - 6:00 PM. Closed on Sundays and holidays. For emergencies: (02) 8123-4567.",
+      "animal": "general",
+      "category": "clinic",
+      "severity": "low",
+      "diagnosis": "N/A",
+      "treatment": "Check schedule"
+    },
+    {
+      "input": "what medicine can i give my dog?",
+      "response": "NEVER give human medication to pets without vet approval. Paracetamol and ibuprofen are TOXIC to pets. Always consult your vet first.",
+      "animal": "general",
+      "category": "medication",
+      "severity": "medium",
+      "diagnosis": "N/A",
+      "treatment": "Vet-prescribed medication only"
+    },
+    {
+      "input": "can i give human medicine to pets?",
+      "response": "NO. Most human medications are dangerous or fatal to pets. Paracetamol, ibuprofen, and aspirin can be toxic. Always consult your vet.",
+      "animal": "general",
+      "category": "medication",
+      "severity": "high",
+      "diagnosis": "Potential poisoning",
+      "treatment": "Emergency vet if already given"
+    },
+    {
+      "input": "how do i treat wounds at home?",
+      "response": "For minor wounds: clean with saline or clean water, apply pet-safe antiseptic, and bandage loosely. For deep wounds, see vet immediately.",
+      "animal": "general",
+      "category": "medication",
+      "severity": "medium",
+      "diagnosis": "Minor wound",
+      "treatment": "Cleaning, antiseptic, vet for serious wounds"
+    },
+    {
+      "input": "what should i do for infections?",
+      "response": "Signs of infection: redness, swelling, discharge, warmth, or bad smell. Do not self-treat with antibiotics. Visit your vet for proper diagnosis.",
+      "animal": "general",
+      "category": "medication",
+      "severity": "medium",
+      "diagnosis": "Possible infection",
+      "treatment": "Vet-prescribed antibiotics"
+    },
+    {
+      "input": "is this medication safe for my pet?",
+      "response": "Always verify medications with your vet. Even 'pet-safe' medications can have wrong dosages. When in doubt, call your vet.",
+      "animal": "general",
+      "category": "medication",
+      "severity": "medium",
+      "diagnosis": "N/A",
+      "treatment": "Vet consultation"
+    },
+    {
+      "input": "my dog can't stand up suddenly",
+      "response": "This could indicate spinal injury, poisoning, or severe weakness. Do not force movement. Support with a towel sling and rush to vet.",
+      "animal": "dog",
+      "category": "emergency",
+      "severity": "critical",
+      "diagnosis": "Spinal injury or poisoning",
+      "treatment": "Emergency stabilization, imaging"
+    },
+    {
+      "input": "my fish flips upside down",
+      "response": "Upside-down swimming is a classic sign of swim bladder disease. Fast the fish for 24-48 hours, then feed peeled peas. Check water quality.",
+      "animal": "fish",
+      "category": "behavior",
+      "severity": "medium",
+      "diagnosis": "Swim bladder disorder",
+      "treatment": "Diet change, water treatment"
+    },
+    {
+      "input": "my pet is losing weight",
+      "response": "Unexplained weight loss can indicate parasites, diabetes, kidney disease, or cancer. Monitor food intake and see vet for tests.",
+      "animal": "general",
+      "category": "weight",
+      "severity": "medium",
+      "diagnosis": "Various possible causes",
+      "treatment": "Blood work, vet exam"
+    }
+  ],
   "metadata": {
-    "version": "2.0",
+    "version": "3.0",
     "generated": "2026-04-11",
-    "total_entries": 120,
+    "total_entries": 152,
+    "vetcare_pro_count": 70,
     "vet_med_snippets_count": 300,
     "sources": [
       "Built-in expert knowledge base",
       "Animal disease spreadsheet - Sheet1.csv",
       "veterinary_clinical_data.csv",
-      "houck2040/vet_med (HuggingFace)"
+      "houck2040/vet_med (HuggingFace)",
+      "VetCare Pro Chatbot Dataset (vetcare_pro_chatbot.csv)"
     ]
   }
 }

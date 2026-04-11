@@ -450,6 +450,51 @@ def api_chat():
             'emoji':        result['emoji'],
         })
 
+    # ─── Layer 2.5: VetCare Pro Chatbot Dataset (fuzzy match) ────────────────
+    vetcare = kb.get('vetcare_pro', [])
+    if vetcare:
+        best_match = None
+        best_score = 0
+        msg_words = set(message.split())
+
+        for entry in vetcare:
+            inp_words = set(entry['input'].split())
+            overlap = len(msg_words & inp_words)
+            # Bonus for longer shared phrases
+            if overlap >= 3 or (overlap >= 2 and len(msg_words) <= 5):
+                if overlap > best_score:
+                    best_score = overlap
+                    best_match = entry
+
+        if best_match and best_score >= 2:
+            severity = best_match.get('severity', 'medium')
+            # Build a rich response
+            parts = []
+
+            # Severity banner
+            if severity == 'critical':
+                parts.append("🚨 EMERGENCY ALERT 🚨")
+            elif severity == 'high':
+                parts.append("⚠️ URGENT")
+
+            parts.append(best_match['response'])
+
+            if best_match.get('diagnosis') and best_match['diagnosis'] != 'N/A':
+                parts.append(f"\nPossible concern: {best_match['diagnosis']}")
+
+            if best_match.get('treatment') and best_match['treatment'] != 'N/A':
+                parts.append(f"Recommended action: {best_match['treatment']}")
+
+            parts.append("\n⚕️ This is general guidance only — NOT a substitute for professional veterinary diagnosis.")
+
+            show_booking = severity in ('high', 'critical', 'medium')
+            return jsonify({
+                'reply':        "\n".join(parts),
+                'type':         'vetcare_pro',
+                'show_booking': show_booking,
+                'severity':     severity,
+            })
+
     # ─── Layer 3: Gemini Flash LLM ─────────────────────────────────────────────
     # Build some KB context for grounding even when no exact match
     kb_context_parts = []
@@ -474,8 +519,11 @@ def api_chat():
         "I'm ASTRID, your VetSync health assistant!\n\n"
         "I can help with:\n"
         "  - Pet symptoms (vomiting, limping, diarrhea, etc.)\n"
+        "  - Emergency cases (hit by car, poisoning, seizures)\n"
+        "  - Bird, fish, dog, cat health\n"
+        "  - Vaccination, nutrition, medication safety\n"
         "  - Clinic FAQs (booking, hours, services)\n\n"
-        "Try asking: 'My dog is vomiting' or 'How to book an appointment?'\n"
+        "Try asking: 'My dog is vomiting' or 'My fish keeps flipping'\n"
         "Or use the quick reply buttons below."
     )
     return jsonify({'reply': fallback, 'type': 'fallback', 'show_booking': False})
