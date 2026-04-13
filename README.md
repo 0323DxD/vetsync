@@ -1,73 +1,58 @@
-# VetSync - ASTRID Pet Health Assistant 🐾
+# VetSync Clinic Platform
 
-VetSync is a modern veterinary clinic platform featuring **ASTRID**, a 3-layer hybrid health assistant designed to provide safe, empathetic, and data-driven guidance for pet owners.
-
----
-
-## 🚀 Key Features
-
-- **ASTRID Hybrid Chatbot**: A clean, modern chat interface that handles both clinic FAQs and pet health queries.
-- **3-Layer Intelligence**:
-    1.  **Local FAQ**: Instant answers for clinic hours, services, and booking.
-    2.  **Clinical Search**: Powered by matched veterinary datasets (12,000+ entries) for diseases and symptoms.
-    3.  **AI Fallback**: Optional integration with Gemini 2.0 Flash for natural language conversation (Grounded in veterinary context).
-- **Security & Privacy**: Built-in "Offline-First" mode that works perfectly without any API keys.
+Welcome to VetSync Clinic, a comprehensive veterinary appointment booking and management platform. This system is designed for ease of use, featuring a modern interface for clients and a helpful scripted assistant, ASTRID.
 
 ---
 
-## 🛠️ Setup Instructions (For Groupmates)
+## 🚀 Getting Started (For Groupmates)
 
-To run this system locally, follow these steps:
+To run this project locally on your machine, follow these steps:
 
-### 1. Clone & Environment
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/0323DxD/vetsync.git
 cd vetsync
-
-# Create a virtual environment
-python -m venv venv
-venv\Scripts\activate  # Windows
 ```
 
-### 2. Install Dependencies
+### 2. Set Up a Virtual Environment
+It is recommended to use a virtual environment to keep dependencies organized:
+```bash
+# Create venv
+python -m venv venv
+
+# Activate venv (Windows)
+.\venv\Scripts\activate
+
+# Activate venv (Mac/Linux)
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Initialize the Databases
-Run the processing scripts to compile the local knowledge base from the raw CSVs:
-```bash
-python dataset/scripts/download_vet_med.py
-python dataset/scripts/process_datasets.py
-```
-
-### 4. Optional: Enable AI Mode
-By default, the chatbot uses the local dataset. To enable the advanced AI features:
-1. Create a file named `.env` in the root folder.
-2. Add your key: `GEMINI_API_KEY=your_key_here`
-3. Get a free key at [Google AI Studio](https://aistudio.google.com/apikey).
-
-> [!WARNING]
-> **NEVER** commit your `.env` file to GitHub. It is already added to `.gitignore` to protect your privacy.
-
-### 5. Run the App
+### 4. Run the Application
 ```bash
 python app.py
 ```
-Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
+The app will be available at `http://127.0.0.1:5000`.
 
 ---
 
-## 📂 Project Structure
-
-- `app.py`: Main Flask backend with the 3-layer ASTRID logic.
-- `dataset/`:
-  - `raw/`: Raw clinical datasets.
-  - `processed/`: The compiled `knowledge_base.json`.
-  - `scripts/`: Data syncing and merge tools.
-- `templates/chatbot.html`: The modern full-chat UI.
+## 💬 ASTRID Virtual Assistant
+ASTRID is our scripted help assistant. 
+- **Location**: Click the floating blue chat button at the bottom right.
+- **Function**: It provides quick, guided answers to common questions (Sign up, Booking, Offers, etc.) via multiple-choice buttons.
+- **No API Key Needed**: This version is fully scripted and does not require external AI services or API keys to run.
 
 ---
 
-## 📄 License
-Education project for VetSync Clinic.
+## 🛠️ Project Structure
+- `app.py`: Main Flask application logic and database models.
+- `templates/`: HTML templates (Base, Index, Booking, Chatbot, etc.).
+- `static/`: CSS styling and images.
+- `requirements.txt`: List of Python libraries required.
+
+*(Enjoy collaborating on VetSync!)*
+

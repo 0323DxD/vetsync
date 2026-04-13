@@ -11,95 +11,9 @@ from dotenv import load_dotenv
 # Load environment variables from .env file (for local development)
 load_dotenv()
 
-# ── Gemini Flash LLM (Layer 3) ──────────────────────────────────────────────
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
-_gemini_client = None
+# ── ASTRID Chatbot (Scripted Navigation Layer) ─────────────────────────────────
+# Note: LLM and Dataset layers removed for a lightweight, scripted experience.
 
-ASTRID_SYSTEM_PROMPT = """You are ASTRID, a friendly and caring AI veterinary assistant for VetSync Clinic.
-
-RULES:
-- Be empathetic, warm, and professional in every response.
-- NEVER give a definitive diagnosis. Only suggest POSSIBLE causes and general advice.
-- ALWAYS include this disclaimer at the end: "This is general guidance only and NOT a substitute for professional veterinary diagnosis. Please book an appointment with our vet for proper evaluation."
-- If the situation sounds urgent (bleeding, seizure, collapse, difficulty breathing, poisoning), STRONGLY urge an immediate vet visit.
-- Keep responses concise: 3-5 short paragraphs maximum.
-- Use bullet points for lists of possible causes or advice.
-- If you are unsure, say so honestly and recommend professional consultation.
-- NEVER recommend human medications for pets (paracetamol, ibuprofen, etc. are toxic).
-- When relevant, suggest the user book an appointment through VetSync.
-- Respond in a natural, conversational tone — not robotic or clinical."""
-
-
-def _get_gemini_client():
-    """Lazy-initialize the Gemini client."""
-    global _gemini_client
-    if _gemini_client is None and GEMINI_API_KEY:
-        try:
-            from google import genai
-            _gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-        except Exception as e:
-            print(f"[ASTRID] Gemini init failed: {e}")
-            _gemini_client = False  # Mark as failed so we don't retry
-    return _gemini_client if _gemini_client else None
-
-
-def _find_relevant_snippets(message, max_snippets=3):
-    """Find vet_med article snippets relevant to the user's message for LLM grounding."""
-    kb = _load_kb()
-    snippets = kb.get('vet_med_snippets', [])
-    if not snippets:
-        return []
-
-    words = set(w for w in message.lower().split() if len(w) > 3)
-    scored = []
-    for s in snippets:
-        kw_overlap = len(words & set(s.get('keywords', [])))
-        text_hits = sum(1 for w in words if w in s.get('text', '').lower())
-        score = kw_overlap * 2 + text_hits
-        if score > 0:
-            scored.append((score, s['text']))
-
-    scored.sort(key=lambda x: x[0], reverse=True)
-    return [text for _, text in scored[:max_snippets]]
-
-
-def _call_gemini_flash(user_message, kb_context="", species=""):
-    """Call Gemini Flash with the user message + grounding context."""
-    client = _get_gemini_client()
-    if not client:
-        return None
-
-    # Build context block
-    context_parts = []
-    if species:
-        context_parts.append(f"The user's pet species: {species}")
-    if kb_context:
-        context_parts.append(f"Relevant veterinary knowledge:\n{kb_context}")
-
-    # Find relevant snippets from vet_med dataset
-    snippets = _find_relevant_snippets(user_message)
-    if snippets:
-        context_parts.append("Additional veterinary reference material:\n" + "\n---\n".join(snippets))
-
-    user_prompt = user_message
-    if context_parts:
-        user_prompt = "\n\n".join(context_parts) + f"\n\nUser question: {user_message}"
-
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=user_prompt,
-            config={
-                "system_instruction": ASTRID_SYSTEM_PROMPT,
-                "temperature": 0.7,
-                "max_output_tokens": 600,
-            }
-        )
-        return response.text if response.text else None
-    except Exception as e:
-        print(f"[ASTRID] Gemini call failed: {e}")
-        traceback.print_exc()
-        return None
 
 
 app = Flask(__name__)
@@ -321,21 +235,10 @@ def book():
 
 # ── API ──────────────────────────────────────────────────────
 
-# ── Load ASTRID Knowledge Base ────────────────────────────────────────────────
-
-_KB_PATH = os.path.join(os.path.dirname(__file__), 'dataset', 'processed', 'knowledge_base.json')
-_KB_DATA  = None
-
+# Knowledge Base loading removed for scripted version.
 def _load_kb():
-    """Lazy-load the knowledge base JSON once."""
-    global _KB_DATA
-    if _KB_DATA is None:
-        if os.path.exists(_KB_PATH):
-            with open(_KB_PATH, encoding='utf-8') as f:
-                _KB_DATA = json.load(f)
-        else:
-            _KB_DATA = {'keyword_map': {}, 'knowledge_base': {}}
-    return _KB_DATA
+    return {'keyword_map': {}, 'knowledge_base': {}, 'vet_med_qa': [], 'vetcare_pro': []}
+
 
 
 def _build_health_reply(entry, species_filter=None):
@@ -396,137 +299,30 @@ def api_chat():
     data    = request.get_json() or {}
     message = data.get('message', '').lower().strip()
 
-    # ─── Layer 1: Clinic FAQ ──────────────────────────────────────────────────
     faq_answers = {
-        "how to book":      "To book an appointment:\n1. Log in to your account.\n2. Go to your Dashboard.\n3. Click 'Book Appointment'.\n4. Select your pet, service, date, and time slot.",
-        "book appointment": "To book an appointment:\n1. Log in to your account.\n2. Go to your Dashboard.\n3. Click 'Book Appointment'.\n4. Select your pet, service, date, and time slot.",
-        "clinic hours":     "VetSync Clinic Hours:\n\nMonday - Saturday: 8:00 AM - 6:00 PM\nSunday & Holidays: CLOSED\n\nFor emergencies outside clinic hours, call our 24/7 hotline: (02) 8123-4567",
-        "operating hours":  "VetSync Clinic Hours:\n\nMonday - Saturday: 8:00 AM - 6:00 PM\nSunday & Holidays: CLOSED\n\nFor emergencies: (02) 8123-4567",
-        "what are the services": "Our services include:\n- General Checkup\n- Vaccination\n- Dental Care\n- Surgery\n- Grooming\n- Emergency Care",
-        "services":         "Our services include:\n- General Checkup\n- Vaccination\n- Dental Care\n- Surgery\n- Grooming\n- Emergency Care",
-        "sign up":          "To sign up:\n1. Click 'Sign Up' at the top right.\n2. Fill in your name, email, contact, and password.\n3. Log in and start booking for your pet!",
-        "register":         "To sign up:\n1. Click 'Sign Up' at the top right.\n2. Fill in your name, email, contact, and password.\n3. Log in and start booking for your pet!",
-        "log in":           "To log in: Click 'Log In' on the top right and enter your registered email and password.",
-        "login":            "To log in: Click 'Log In' on the top right and enter your registered email and password.",
-        "leave a review":   "After completing an appointment, visit your Dashboard and click 'Leave a Review' to share your experience.",
-        "contact":          "You can reach VetSync Clinic:\n- Phone: (02) 8123-4567\n- Email: info@vetsync.com\n- Visit our Contact page for the full form.",
-        "location":         "Please visit our Contact page or call (02) 8123-4567 for clinic location details.",
-        "price":            "Pricing varies by service. Please book a consultation or call (02) 8123-4567 for the latest pricing.",
-        "cost":             "Pricing varies by service. Please book a consultation or call (02) 8123-4567 for the latest pricing.",
-        "emergency":        "For pet emergencies outside clinic hours, call our 24/7 emergency hotline: (02) 8123-4567. Stay calm, keep your pet comfortable, and get to a vet as soon as possible.",
+        "how to book":      "<strong>To book an appointment:</strong><ol><li>Log in to your account.</li><li>Go to your Dashboard.</li><li>Click 'Book Appointment'.</li><li>Select your pet, service, date, and time slot.</li></ol><em>Disclaimer: For urgent emergency cases, please call the clinic directly instead of booking online.</em>",
+        "book appointment": "<strong>To book an appointment:</strong><ol><li>Log in to your account.</li><li>Go to your Dashboard.</li><li>Click 'Book Appointment'.</li><li>Select your pet, service, date, and time slot.</li></ol><em>Disclaimer: For urgent emergency cases, please call the clinic directly instead of booking online.</em>",
+        "clinic hours":     "<strong>VetSync Clinic Hours:</strong><br><br>Monday - Saturday: 8:00 AM - 6:00 PM<br>Sunday & Holidays: CLOSED<br><br><em>For emergencies outside clinic hours, call our 24/7 hotline: (02) 8123-4567</em>",
+        "what are the offers": "We frequently have seasonal offers! Right now, we offer a <strong>10% discount on first-time checkups</strong> and discounted vaccination bundles.<br><br>Book an appointment online to secure these offers.",
+        "how to view my pets": "<strong>To view your pets:</strong><ol><li>Log in to your account.</li><li>Navigate to your Dashboard.</li><li>Look for the 'My Pets' section to view all registered pet profiles.</li></ol>",
+        "how to check services": "Our primary services include:<br><ul><li>General Checkup</li><li>Vaccination</li><li>Dental Care</li><li>Surgery</li><li>Grooming</li><li>Emergency Care</li></ul><br>Click 'Services' on the top navigation bar to see detailed pricing.",
+        "how to leave a review": "<strong>To leave a review:</strong><ol><li>Log in to your account.</li><li>Go to your Dashboard.</li><li>Locate a completed appointment.</li><li>Click 'Leave a Review' to share your experience!</li></ol>",
+        "how to sign up":   "<strong>To sign up:</strong><ol><li>Click 'Sign Up' at the top right.</li><li>Fill in your name, email, contact, and password.</li><li>Log in and start booking for your pet!</li></ol>",
+        "how to log in":    "<strong>To log in:</strong><br>Click 'Log In' on the top right and enter your registered email and password."
     }
 
     for key, answer in faq_answers.items():
         if key in message:
             return jsonify({'reply': answer, 'type': 'faq'})
 
-    # ─── Layer 2: Pet Health Q&A from Knowledge Base ──────────────────────────
-    kb      = _load_kb()
-    kw_map  = kb.get('keyword_map', {})
-    kb_data = kb.get('knowledge_base', {})
-
-    # Find matching symptom key via keyword map
-    matched_key = None
-    for keyword, kb_key in kw_map.items():
-        if keyword in message:
-            matched_key = kb_key
-            break
-
-    # Also try direct key lookup (e.g. user types exact condition name)
-    if not matched_key:
-        for kb_key in kb_data:
-            if kb_key.replace('_', ' ') in message:
-                matched_key = kb_key
-                break
-
-    if matched_key and matched_key in kb_data:
-        entry  = kb_data[matched_key]
-        result = _build_health_reply(entry)
-        return jsonify({
-            'reply':        result['text'],
-            'type':         'health',
-            'show_booking': True,
-            'condition':    result['condition'],
-            'emoji':        result['emoji'],
-        })
-
-    # ─── Layer 2.5: VetCare Pro Chatbot Dataset (fuzzy match) ────────────────
-    vetcare = kb.get('vetcare_pro', [])
-    if vetcare:
-        best_match = None
-        best_score = 0
-        msg_words = set(message.split())
-
-        for entry in vetcare:
-            inp_words = set(entry['input'].split())
-            overlap = len(msg_words & inp_words)
-            # Bonus for longer shared phrases
-            if overlap >= 3 or (overlap >= 2 and len(msg_words) <= 5):
-                if overlap > best_score:
-                    best_score = overlap
-                    best_match = entry
-
-        if best_match and best_score >= 2:
-            severity = best_match.get('severity', 'medium')
-            # Build a rich response
-            parts = []
-
-            # Severity banner
-            if severity == 'critical':
-                parts.append("🚨 EMERGENCY ALERT 🚨")
-            elif severity == 'high':
-                parts.append("⚠️ URGENT")
-
-            parts.append(best_match['response'])
-
-            if best_match.get('diagnosis') and best_match['diagnosis'] != 'N/A':
-                parts.append(f"\nPossible concern: {best_match['diagnosis']}")
-
-            if best_match.get('treatment') and best_match['treatment'] != 'N/A':
-                parts.append(f"Recommended action: {best_match['treatment']}")
-
-            parts.append("\n⚕️ This is general guidance only — NOT a substitute for professional veterinary diagnosis.")
-
-            show_booking = severity in ('high', 'critical', 'medium')
-            return jsonify({
-                'reply':        "\n".join(parts),
-                'type':         'vetcare_pro',
-                'show_booking': show_booking,
-                'severity':     severity,
-            })
-
-    # ─── Layer 3: Gemini Flash LLM ─────────────────────────────────────────────
-    # Build some KB context for grounding even when no exact match
-    kb_context_parts = []
-    symptom_history = kb.get('symptom_history', {})
-    for symptom, histories in symptom_history.items():
-        if symptom in message:
-            kb_context_parts.append(f"Symptom '{symptom}' is associated with: {', '.join(histories[:3])}")
-
-    kb_context = "\n".join(kb_context_parts) if kb_context_parts else ""
-    species = data.get('species', '')
-
-    llm_reply = _call_gemini_flash(message, kb_context=kb_context, species=species)
-    if llm_reply:
-        return jsonify({
-            'reply':        llm_reply,
-            'type':         'llm',
-            'show_booking': True,
-        })
-
-    # ─── Layer 4: Static Fallback (no API key or LLM failure) ────────────────
+    # Default fallback for unmatched queries
     fallback = (
-        "I'm ASTRID, your VetSync health assistant!\n\n"
-        "I can help with:\n"
-        "  - Pet symptoms (vomiting, limping, diarrhea, etc.)\n"
-        "  - Emergency cases (hit by car, poisoning, seizures)\n"
-        "  - Bird, fish, dog, cat health\n"
-        "  - Vaccination, nutrition, medication safety\n"
-        "  - Clinic FAQs (booking, hours, services)\n\n"
-        "Try asking: 'My dog is vomiting' or 'My fish keeps flipping'\n"
-        "Or use the quick reply buttons below."
+        "I'm ASTRID, your VetSync clinic assistant!\n\n"
+        "Please select one of the options from the menu to get started, "
+        "or contact our clinic directly for specific medical advice."
     )
     return jsonify({'reply': fallback, 'type': 'fallback', 'show_booking': False})
+
 
 
 # ─── /api/chat/health — Species-filtered pet health endpoint ─────────────────
