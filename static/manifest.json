@@ -1,0 +1,24 @@
+{
+  "name": "VetCare Pro - Veterinary Clinic System",
+  "short_name": "VetCare Pro",
+  "description": "A comprehensive veterinary clinic management system with scheduling and monitoring features.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/images/vet-dog.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/images/vet-dog.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

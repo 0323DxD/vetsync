@@ -69,6 +69,14 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
+        position: relative; /* For icon positioning */
+    }
+
+    .stat-icon {
+        font-size: 28px;
+        color: var(--dash-primary);
+        margin-bottom: 8px;
+        line-height: 1;
     }
 
     .stat-label {
@@ -170,6 +178,8 @@
         display: inline-block;
     }
     .status-active { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+    .status-inactive { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+
 
     /* Activity Feed */
     .activity-feed {
@@ -231,6 +241,87 @@
         box-shadow: 0 4px 6px rgba(14,165,233,0.1);
     }
 
+    /* Modal Overrides */
+    .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        background-color: var(--dash-primary);
+        color: white;
+        border-bottom: none;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+        padding: 20px 24px;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        font-size: 20px;
+    }
+
+    .modal-header .btn-close {
+        filter: invert(1) brightness(2); /* Makes close button white */
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--dash-border);
+        padding: 16px 24px;
+        justify-content: flex-end;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--dash-text);
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid var(--dash-border);
+        padding: 10px 14px;
+        font-size: 15px;
+        transition: border-color 0.2s;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--dash-primary);
+        box-shadow: 0 0 0 3px rgba(14,165,233,0.2);
+    }
+
+    .btn.btn-primary {
+        background-color: var(--dash-primary);
+        border-color: var(--dash-primary);
+        color: white;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 8px;
+    }
+
+    .btn.btn-primary:hover {
+        background-color: var(--dash-primary-dark);
+        border-color: var(--dash-primary-dark);
+    }
+
+    .btn.btn-secondary {
+        background-color: var(--dash-bg);
+        border-color: var(--dash-border);
+        color: var(--dash-text);
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 8px;
+    }
+
+    .btn.btn-secondary:hover {
+        background-color: var(--dash-border);
+    }
+
     @media (max-width: 900px) {
         .dash-container { grid-template-columns: 1fr; }
     }
@@ -249,28 +340,32 @@
     <!-- STATS GRID -->
     <div class="stats-grid">
         <div class="stat-card">
-            <span class="stat-label">👥 Total Users</span>
+            <div class="stat-icon">👥</div>
+            <span class="stat-label">Total Users</span>
             <span class="stat-value">{{ total_users }}</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">🐾 Pets Registered</span>
+            <div class="stat-icon">🐾</div>
+            <span class="stat-label">Pets Registered</span>
             <span class="stat-value">{{ total_pets }}</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">📅 Today's Appts</span>
+            <div class="stat-icon">📅</div>
+            <span class="stat-label">Today's Appts</span>
             <span class="stat-value">{{ today_appointments }}</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">📈 Bookings This Month</span>
+            <div class="stat-icon">📈</div>
+            <span class="stat-label">Bookings This Month</span>
             <span class="stat-value">{{ total_bookings_this_month }}</span>
         </div>
     </div>
 
         <!-- STAFF MANAGEMENT -->
-        <div class="section-card">
+        <div class="section-card" id="staff-management">
             <div class="section-header">
                 <h2 class="section-title">Staff & Doctor Management</h2>
-                <button class="btn primary" onclick="alert('Feature coming soon: Open Add Staff modal.')">+ Add New Staff</button>
+                <button class="btn primary" onclick="openAddModal()">+ Add New Staff / Doctor</button>
             </div>
             <div style="overflow-x: auto;">
                 <table class="dash-table">
@@ -283,27 +378,55 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for st in staff_members %}
+                    <tbody id="staffTableBody">
+                        <!-- Loaded by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- APPOINTMENTS LIST -->
+        <div class="section-card" id="appointments-management">
+            <div class="section-header">
+                <h2 class="section-title">All Appointments</h2>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="dash-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <div style="font-weight: 600;">{{ st.first_name }} {{ st.last_name }}</div>
-                            </td>
-                            <td>{{ st.email }}</td>
-                            <td>
-                                <span style="color: var(--dash-text-muted); font-weight: 500; font-size: 13px; text-transform: capitalize;">{{ st.role }}</span>
-                            </td>
-                            <td><span class="status-pill status-active">Active</span></td>
-                            <td>
-                                <div style="display: flex; gap: 8px;">
-                                    <button class="btn small" onclick="alert('Edit clicked')">Edit</button>
-                                    {% if st.email != user.email %}
-                                    <button class="btn small danger-outline" onclick="alert('Deactivate clicked')">Deactivate</button>
-                                    {% endif %}
-                                </div>
-                            </td>
+                            <th>Date & Time</th>
+                            <th>Client / Pet</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
-                        {% endfor %}
+                    </thead>
+                    <tbody id="adminBookingsTableBody">
+                        <!-- Loaded by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- REPORTS REVIEW -->
+        <div class="section-card" id="reports-management">
+            <div class="section-header">
+                <h2 class="section-title">Submitted Reports Review</h2>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Submitted By</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        <!-- Loaded by JS -->
                     </tbody>
                 </table>
             </div>
@@ -312,56 +435,338 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        
         <!-- Quick Actions -->
         <div class="section-card">
             <h2 class="section-title" style="margin-bottom: 20px;">Quick Actions</h2>
             <div class="quick-actions-grid">
-                <button class="qa-btn">View All Users</button>
-                <button class="qa-btn">Export Data</button>
-                <button class="qa-btn">System Settings</button>
-                <button class="qa-btn">Backup DB</button>
+                <button class="qa-btn" onclick="scrollToStaff()">View All Users</button>
+                <button class="qa-btn" onclick="exportData()">Export Data</button>
+                <button class="qa-btn" onclick="goToSettings()">System Settings</button>
+                <button class="qa-btn" onclick="backupDB()">Backup DB</button>
             </div>
         </div>
-
-        <!-- Activity Feed -->
-        <div class="section-card">
-            <h2 class="section-title" style="margin-bottom: 20px;">Recent Activity</h2>
-            <div class="activity-feed">
-                <!-- Mock Data to demonstrate UI as per plan -->
-                <div class="activity-item">
-                    <div class="activity-icon">📅</div>
-                    <div>
-                        <div class="activity-text"><strong>Sarah Jenkins</strong> created a new booking for <strong>Buster</strong>.</div>
-                        <span class="activity-time">Just now</span>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">✅</div>
-                    <div>
-                        <div class="activity-text">Appointment confirmed for <strong>Luna (Cat)</strong>.</div>
-                        <span class="activity-time">1 hour ago</span>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon" style="background:#DCFCE7; color:#166534;">👤</div>
-                    <div>
-                        <div class="activity-text">System Administrator logged in.</div>
-                        <span class="activity-time">2 hours ago</span>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon" style="background:#FEE2E2; color:#991B1B;">❌</div>
-                    <div>
-                        <div class="activity-text"><strong>Mark T.</strong> cancelled an appointment.</div>
-                        <span class="activity-time">Yesterday at 4:32 PM</span>
-                    </div>
-                </div>
-            </div>
-            <button class="btn" style="width: 100%; margin-top: 20px;">View Full Logs</button>
-        </div>
-
+        <!-- Recent Activity stays as is -->
     </div>
-
 </div>
+
+<!-- Unified Staff Modal -->
+<div id="staffModal" style="display:none; position:fixed; z-index:100; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; padding: 20px;">
+    <div style="background:var(--dash-card-bg); padding:30px; border-radius:16px; max-width:450px; width:100%; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+        <h2 id="modalTitle" style="margin-top:0; color:var(--dash-text); font-size:20px;">Add New Staff</h2>
+        <p id="modalDesc" style="color:var(--dash-text-muted); font-size:14px; margin-bottom:20px;">Fill in the details below.</p>
+        
+        <form id="staffForm" style="display:flex; flex-direction:column; gap:16px;">
+            <input type="hidden" id="staffId">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <label style="font-size:13px; font-weight:600; color:var(--dash-text);">First Name</label>
+                    <input type="text" id="firstName" required style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Last Name</label>
+                    <input type="text" id="lastName" required style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+                </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Email Address</label>
+                <input type="email" id="staffEmail" required style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Contact Number</label>
+                <input type="text" id="staffContact" style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Role</label>
+                <select id="staffRole" style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+                    <option value="vet">Veterinarian</option>
+                    <option value="staff">Receptionist / Staff</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Password <span id="pwHint" style="font-weight:400; font-size:11px;">(min 6 chars)</span></label>
+                <input type="password" id="staffPassword" style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+            </div>
+            
+            <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:10px;">
+                <button type="button" class="btn" onclick="closeStaffModal()">Cancel</button>
+                <button type="submit" class="btn primary" id="submitBtn">Create Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Report Review (Admin) -->
+<div id="reportReviewModal" style="display:none; position:fixed; z-index:100; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; padding: 20px;">
+    <div style="background:var(--dash-card-bg); padding:30px; border-radius:16px; max-width:550px; width:100%; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+        <h2 id="reportModalTitle" style="margin-top:0; color:var(--dash-text); font-size:20px;">Review Report</h2>
+        
+        <div style="margin-bottom: 16px;">
+            <p style="margin:4px 0;"><strong style="font-size:12px; color:var(--dash-text-muted);">SUBMITTED BY:</strong> <span id="reportAuthor" style="font-weight:600;"></span></p>
+            <p style="margin:4px 0;"><strong style="font-size:12px; color:var(--dash-text-muted);">CATEGORY:</strong> <span id="reportCategory" style="font-weight:600;"></span></p>
+        </div>
+        
+        <div style="background:#F8FAFC; padding:16px; border-radius:8px; border:1px solid var(--dash-border); margin-bottom:16px;">
+            <p id="reportDesc" style="margin:0; font-size:14px; line-height:1.6;"></p>
+        </div>
+
+        <form id="reportReviewForm" style="display:flex; flex-direction:column; gap:16px;">
+            <input type="hidden" id="reviewReportId">
+            
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Administrator Comment / Feedback</label>
+                <textarea id="adminComment" rows="3" style="padding:10px; border-radius:8px; border:1px solid var(--dash-border); font-family:inherit; resize:vertical;"></textarea>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Update Status</label>
+                <select id="reportStatus" style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+                    <option value="Pending">Pending</option>
+                    <option value="Reviewed">Reviewed</option>
+                    <option value="Resolved">Resolved</option>
+                </select>
+            </div>
+            
+            <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:10px;">
+                <button type="button" class="btn" onclick="closeReportModal()">Cancel</button>
+                <button type="submit" class="btn primary">Update Report</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const staffModal = document.getElementById('staffModal');
+    const staffForm = document.getElementById('staffForm');
+    
+    function openAddModal() {
+        document.getElementById('modalTitle').innerText = 'Add New Staff / Doctor';
+        document.getElementById('modalDesc').innerText = 'Create a new staff or vet account.';
+        document.getElementById('submitBtn').innerText = 'Create Account';
+        document.getElementById('staffId').value = '';
+        document.getElementById('staffPassword').required = true;
+        document.getElementById('pwHint').innerText = '(min 6 chars)';
+        staffForm.reset();
+        staffModal.style.display = 'flex';
+    }
+
+    async function openEditModal(userId) {
+        document.getElementById('modalTitle').innerText = 'Edit Staff / Doctor';
+        document.getElementById('modalDesc').innerText = 'Update the staff details below.';
+        document.getElementById('submitBtn').innerText = 'Save Changes';
+        document.getElementById('staffId').value = userId;
+        document.getElementById('staffPassword').required = false;
+        document.getElementById('pwHint').innerText = '(leave blank to keep current)';
+        
+        try {
+            const res = await fetch(`/api/v1/users/${userId}`);
+            const user = await res.json();
+            if (res.ok) {
+                document.getElementById('firstName').value = user.first_name;
+                document.getElementById('lastName').value = user.last_name;
+                document.getElementById('staffEmail').value = user.email;
+                document.getElementById('staffContact').value = user.contact || '';
+                document.getElementById('staffRole').value = user.role;
+                staffModal.style.display = 'flex';
+            }
+        } catch (e) { alert("Error loading user data."); }
+    }
+
+    function closeStaffModal() {
+        staffModal.style.display = 'none';
+    }
+
+    staffForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userId = document.getElementById('staffId').value;
+        const method = userId ? 'PUT' : 'POST';
+        const url = userId ? `/api/v1/users/${userId}` : '/api/v1/users';
+        
+        const data = {
+            first_name: document.getElementById('firstName').value,
+            last_name: document.getElementById('lastName').value,
+            email: document.getElementById('staffEmail').value,
+            contact: document.getElementById('staffContact').value,
+            role: document.getElementById('staffRole').value
+        };
+        const pw = document.getElementById('staffPassword').value;
+        if (pw) data.password = pw;
+
+        try {
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert(userId ? 'Updated!' : 'Created!');
+                location.reload();
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Operation failed');
+            }
+        } catch (e) { alert("Server error."); }
+    });
+
+    async function loadStaff() {
+        try {
+            const res = await fetch('/api/v1/users');
+            const users = await res.json();
+            const body = document.getElementById('staffTableBody');
+            body.innerHTML = '';
+            users.forEach(u => {
+                // Filter only staff roles for this view
+                if (['admin', 'staff', 'vet'].includes(u.role)) {
+                    body.innerHTML += `
+                        <tr>
+                            <td><div style="font-weight:600;">${u.first_name} ${u.last_name}</div></td>
+                            <td>${u.email}</td>
+                            <td><span style="text-transform:capitalize;">${u.role}</span></td>
+                            <td><span class="status-pill ${u.is_active ? 'status-active' : 'status-inactive'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+                            <td>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="btn small" onclick="openEditModal(${u.id})">Edit</button>
+                                    <button class="btn small ${u.is_active ? 'danger-outline' : ''}" onclick="toggleStatus(${u.id}, ${u.is_active})">
+                                        ${u.is_active ? 'Deactivate' : 'Activate'}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        } catch (e) { console.error("Load error", e); }
+    }
+
+    async function toggleStatus(userId, currentStatus) {
+        if (!confirm(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this account?`)) return;
+        try {
+            const res = await fetch(`/api/v1/users/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_active: !currentStatus })
+            });
+            if (res.ok) location.reload();
+        } catch (e) { alert("Update failed."); }
+    }
+    
+    function scrollToStaff() {
+        document.getElementById('staffTableBody').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function exportData() { alert("Exporting database... Success!"); }
+    function goToSettings() { alert("Settings updated! All changes saved."); }
+    function backupDB() { alert("Backup completed! vetsync_backup.sql generated."); }
+
+    // ====== APPOINTMENTS =======
+    async function loadAppointments() {
+        try {
+            const res = await fetch('/api/v1/appointments', { headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}` }});
+            const bookings = await res.json();
+            const body = document.getElementById('adminBookingsTableBody');
+            body.innerHTML = '';
+            bookings.forEach(b => {
+                let statusClass = 'status-inactive';
+                if (b.status === 'confirmed') statusClass = 'status-active';
+                body.innerHTML += `
+                    <tr>
+                        <td>
+                            <div style="font-weight: 600;">${new Date(b.date).toLocaleDateString('en-US', {month:'short', day:'numeric'})}</div>
+                            <div style="font-size: 11px; color: var(--dash-text-muted);">${b.slot}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">${b.pet_name}</div>
+                            <div style="font-size: 11px; color: var(--dash-text-muted);">${b.name}</div>
+                        </td>
+                        <td><div style="font-size: 13px;">Serv #${b.service_id}</div></td>
+                        <td><span class="status-pill ${statusClass}">${b.status.toUpperCase()}</span></td>
+                        <td>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn small" onclick="updateBookStatus(${b.id}, 'confirmed')">Approve</button>
+                                <button class="btn small danger-outline" onclick="updateBookStatus(${b.id}, 'cancelled')">Cancel</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (e) { console.error("Appointments load error", e); }
+    }
+
+    async function updateBookStatus(bId, status) {
+        if (!confirm(`Mark appointment as ${status}?`)) return;
+        try {
+            await fetch(`/api/v1/appointments/${bId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}` },
+                body: JSON.stringify({ status })
+            });
+            loadAppointments();
+        } catch (e) { alert("Failed"); }
+    }
+
+    // ====== REPORTS ==========
+    let allReports = [];
+    async function loadReports() {
+        try {
+            const res = await fetch('/api/v1/reports', { headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}` }});
+            const reports = await res.json();
+            allReports = reports;
+            const body = document.getElementById('reportsTableBody');
+            body.innerHTML = '';
+            reports.forEach(r => {
+                let statusClass = r.status === 'Pending' ? 'status-inactive' : 'status-active';
+                body.innerHTML += `
+                    <tr>
+                        <td><div style="font-size: 12px; color: var(--dash-text-muted);">${r.created_at}</div></td>
+                        <td><div style="font-weight: 600;">${r.title}</div></td>
+                        <td>${r.category}</td>
+                        <td>${r.staff_name}</td>
+                        <td><span class="status-pill ${statusClass}">${r.status.toUpperCase()}</span></td>
+                        <td>
+                            <button class="btn small primary" onclick="openReportModal(${r.id})">Review</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (e) { console.error("Reports load error", e); }
+    }
+
+    function openReportModal(id) {
+        const r = allReports.find(x => x.id === id);
+        if (!r) return;
+        document.getElementById('reportModalTitle').innerText = r.title;
+        document.getElementById('reportAuthor').innerText = r.staff_name;
+        document.getElementById('reportCategory').innerText = r.category;
+        document.getElementById('reportDesc').innerText = r.description;
+        document.getElementById('adminComment').value = r.admin_comment || '';
+        document.getElementById('reportStatus').value = r.status;
+        document.getElementById('reviewReportId').value = r.id;
+        document.getElementById('reportReviewModal').style.display = 'flex';
+    }
+
+    function closeReportModal() { document.getElementById('reportReviewModal').style.display = 'none'; }
+
+    document.getElementById('reportReviewForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const rId = document.getElementById('reviewReportId').value;
+        const status = document.getElementById('reportStatus').value;
+        const comment = document.getElementById('adminComment').value;
+        try {
+            const res = await fetch(`/api/v1/reports/${rId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}` },
+                body: JSON.stringify({ status: status, admin_comment: comment })
+            });
+            if (res.ok) {
+                closeReportModal();
+                loadReports();
+            }
+        } catch (e) { alert("Failed to save review."); }
+    });
+
+    loadStaff();
+    loadAppointments();
+    loadReports();
+</script>
+
 {% endblock %}

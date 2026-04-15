@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Offline - VetCare Pro{% endblock %}
+
+{% block content %}
+<div class="offline-container" style="text-align: center; padding: 100px 20px;">
+    <div class="offline-icon" style="font-size: 80px; margin-bottom: 20px;">📡🚫</div>
+    <h1 style="font-size: 2.5rem; color: #333; margin-bottom: 15px;">You are currently offline</h1>
+    <p style="font-size: 1.1rem; color: #666; max-width: 600px; margin: 0 auto 30px;">
+        It looks like you've lost your internet connection. Don't worry, you can still browse previously visited pages, and any bookings you make will be saved locally and synced once you're back online.
+    </p>
+    <div class="offline-actions">
+        <button onclick="window.location.reload()" class="btn-nav-fill" style="padding: 12px 30px; font-size: 1rem;">Try Again</button>
+        <a href="/" class="btn-nav-outline" style="padding: 12px 30px; font-size: 1rem; margin-left: 10px;">Go Home</a>
+    </div>
+</div>
+{% endblock %}

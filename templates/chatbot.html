@@ -1,70 +1,78 @@
 <style>
-/* Chatbot Base Styles */
-#chatbot-container * {
+  /* Chatbot Base Styles */
+  #chatbot-container * {
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
 
-/* Floating Button */
-#chatbot-toggle-btn {
+  /* Floating Button */
+  #chatbot-toggle-btn {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background-color: #0EA5E9; /* Bright Blue */
+    background-color: #0ea5e9; /* Bright Blue */
     color: white;
     width: 64px;
     height: 64px;
     border-radius: 50%;
     border: none;
-    box-shadow: 0 10px 15px -3px rgba(3, 105, 161, 0.4), 0 4px 6px -2px rgba(3, 105, 161, 0.2);
+    box-shadow:
+      0 10px 15px -3px rgba(3, 105, 161, 0.4),
+      0 4px 6px -2px rgba(3, 105, 161, 0.2);
     cursor: pointer;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  }
 
-#chatbot-toggle-btn:hover {
-    background-color: #0284C7;
+  #chatbot-toggle-btn:hover {
+    background-color: #0284c7;
     transform: scale(1.08) translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(3, 105, 161, 0.5), 0 10px 10px -5px rgba(3, 105, 161, 0.3);
-}
+    box-shadow:
+      0 20px 25px -5px rgba(3, 105, 161, 0.5),
+      0 10px 10px -5px rgba(3, 105, 161, 0.3);
+  }
 
-#chatbot-toggle-btn svg {
+  #chatbot-toggle-btn svg {
     width: 32px;
     height: 32px;
     fill: currentColor;
-}
+  }
 
-/* Chat Window */
-#chatbot-window {
+  /* Chat Window */
+  #chatbot-window {
     position: fixed;
     bottom: 104px;
     right: 24px;
     width: 400px;
-    height: 520px; 
-    background-color: #F0F9FF; /* very light sky blue */
+    height: 520px;
+    background-color: #f0f9ff; /* very light sky blue */
     border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(3, 105, 161, 0.3), 0 0 20px rgba(14, 165, 233, 0.05) inset;
+    box-shadow:
+      0 25px 50px -12px rgba(3, 105, 161, 0.3),
+      0 0 20px rgba(14, 165, 233, 0.05) inset;
     display: none;
     flex-direction: column;
     overflow: hidden;
     z-index: 1000;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
     opacity: 0;
     transform: translateY(20px);
-}
+  }
 
-#chatbot-window.open {
+  #chatbot-window.open {
     display: flex;
     opacity: 1;
     transform: translateY(0);
-}
+  }
 
-/* Header */
-#chatbot-header {
-    background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+  /* Header */
+  #chatbot-header {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     padding: 18px 24px;
     display: flex;
     justify-content: space-between;
@@ -72,15 +80,15 @@
     flex-shrink: 0;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     z-index: 10;
-}
+  }
 
-.chatbot-header-left {
+  .chatbot-header-left {
     display: flex;
     align-items: center;
     gap: 14px;
-}
+  }
 
-.chatbot-avatar {
+  .chatbot-avatar {
     width: 42px;
     height: 42px;
     background-color: white;
@@ -89,37 +97,37 @@
     align-items: center;
     justify-content: center;
     padding: 2px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-.chatbot-avatar img {
+  .chatbot-avatar img {
     border-radius: 50%;
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
+  }
 
-.chatbot-title-container {
+  .chatbot-title-container {
     display: flex;
     flex-direction: column;
-}
+  }
 
-.chatbot-title {
+  .chatbot-title {
     color: white;
     font-weight: 700;
     margin: 0;
     font-size: 16px;
     letter-spacing: 0.5px;
-}
+  }
 
-.chatbot-subtitle {
-    color: #E0F2FE;
+  .chatbot-subtitle {
+    color: #e0f2fe;
     font-size: 12px;
     margin: 0;
     font-weight: 400;
-}
+  }
 
-#chatbot-close-btn {
+  #chatbot-close-btn {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: white;
@@ -132,48 +140,48 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
-}
+  }
 
-#chatbot-close-btn:hover {
+  #chatbot-close-btn:hover {
     background: rgba(255, 255, 255, 0.4);
     transform: rotate(90deg);
-}
+  }
 
-/* Main Body Panel */
-#chatbot-body {
+  /* Main Body Panel */
+  #chatbot-body {
     flex: 1;
     padding: 24px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-}
+  }
 
-/* Quick Replies List Area */
-#chatbot-options {
+  /* Quick Replies List Area */
+  #chatbot-options {
     display: flex;
     flex-direction: column;
     gap: 16px;
-}
+  }
 
-.quick-reply-label {
+  .quick-reply-label {
     font-size: 16px;
-    color: #0369A1;
+    color: #0369a1;
     margin-bottom: 4px;
     font-weight: 700;
     text-align: center;
-}
+  }
 
-/* 2 Column Grid for buttons */
-#quick-replies-container {
+  /* 2 Column Grid for buttons */
+  #quick-replies-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-}
+  }
 
-.quick-reply-btn {
+  .quick-reply-btn {
     background-color: white;
-    color: #0284C7;
-    border: 1px solid #BAE6FD;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
     border-radius: 14px;
     padding: 16px 18px;
     font-size: 14px;
@@ -187,86 +195,87 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-}
+  }
 
-.quick-reply-btn:hover {
-    background-color: #0EA5E9;
+  .quick-reply-btn:hover {
+    background-color: #0ea5e9;
     color: white;
-    border-color: #0EA5E9;
+    border-color: #0ea5e9;
     transform: translateY(-2px);
     box-shadow: 0 8px 15px -3px rgba(3, 105, 161, 0.25);
-}
+  }
 
-/* Answer Display Area */
-#chatbot-answer {
+  /* Answer Display Area */
+  #chatbot-answer {
     display: none;
     flex-direction: column;
     background-color: white;
     border-radius: 16px;
-    border: 1px solid #E0F2FE;
+    border: 1px solid #e0f2fe;
     box-shadow: 0 8px 16px -4px rgba(3, 105, 161, 0.1);
     overflow: hidden;
-}
+  }
 
-#chatbot-answer-header {
-    background-color: #E0F2FE;
+  #chatbot-answer-header {
+    background-color: #e0f2fe;
     padding: 16px 20px;
-    border-bottom: 1px solid #BAE6FD;
-}
+    border-bottom: 1px solid #bae6fd;
+  }
 
-#chatbot-answer-title {
-    color: #0369A1;
+  #chatbot-answer-title {
+    color: #0369a1;
     font-size: 16px;
     font-weight: 700;
     margin: 0;
-}
+  }
 
-#chatbot-answer-content {
+  #chatbot-answer-content {
     padding: 20px;
-}
+  }
 
-#chatbot-answer-text {
-    color: #1E3A8A;
+  #chatbot-answer-text {
+    color: #1e3a8a;
     font-size: 14px;
     line-height: 1.6;
     margin: 0;
-}
+  }
 
-/* Rich text formatting applied from API */
-#chatbot-answer-text strong {
-    color: #0284C7;
-}
+  /* Rich text formatting applied from API */
+  #chatbot-answer-text strong {
+    color: #0284c7;
+  }
 
-#chatbot-answer-text ol, #chatbot-answer-text ul {
+  #chatbot-answer-text ol,
+  #chatbot-answer-text ul {
     padding-left: 20px;
     margin-top: 12px;
     margin-bottom: 12px;
-}
+  }
 
-#chatbot-answer-text li {
+  #chatbot-answer-text li {
     margin-bottom: 8px;
-}
+  }
 
-#chatbot-answer-text em {
+  #chatbot-answer-text em {
     display: block;
     margin-top: 16px;
     padding-top: 12px;
-    border-top: 1px dashed #BAE6FD;
-    color: #64748B;
+    border-top: 1px dashed #bae6fd;
+    color: #64748b;
     font-size: 12px;
     font-style: normal;
-}
+  }
 
-.btn-container {
+  .btn-container {
     padding: 0 20px 20px 20px;
     display: flex;
     justify-content: center;
-}
+  }
 
-#chatbot-back-btn {
+  #chatbot-back-btn {
     background-color: white;
-    color: #0EA5E9;
-    border: 2px solid #0EA5E9;
+    color: #0ea5e9;
+    border: 2px solid #0ea5e9;
     border-radius: 999px; /* pill shape */
     padding: 8px 24px;
     font-size: 14px;
@@ -276,165 +285,261 @@
     display: flex;
     align-items: center;
     gap: 8px;
-}
+  }
 
-#chatbot-back-btn:hover {
-    background-color: #0EA5E9;
+  #chatbot-back-btn:hover {
+    background-color: #0ea5e9;
     color: white;
-}
+  }
 
-/* Responsive */
-@media (max-width: 480px) {
+  /* Responsive */
+  @media (max-width: 480px) {
     #chatbot-window {
-        width: calc(100% - 32px);
-        height: 65vh;
-        right: 16px;
-        bottom: 96px;
+      width: calc(100% - 32px);
+      height: 65vh;
+      right: 16px;
+      bottom: 96px;
     }
-    
+
     #quick-replies-container {
-        grid-template-columns: 1fr; /* single column on very small mobile */
+      grid-template-columns: 1fr; /* single column on very small mobile */
     }
-}
+  }
 </style>
 
 <div id="chatbot-container">
-    <!-- Floating Chat Button -->
-    <button id="chatbot-toggle-btn" onclick="toggleChatbot()" title="Need help? Ask ASTRID anything about VetSync!">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
-        </svg>
-    </button>
+  <!-- Floating Chat Button -->
+  <button
+    id="chatbot-toggle-btn"
+    onclick="toggleChatbot()"
+    title="Need help? Ask ASTRID anything about VetSync!"
+  >
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"
+      />
+    </svg>
+  </button>
 
-    <!-- Chat Window -->
-    <div id="chatbot-window">
-        <!-- Header -->
-        <div id="chatbot-header">
-            <div class="chatbot-header-left">
-                <div class="chatbot-avatar">
-                    <img src="{{ url_for('static', filename='images/astrid.png') }}" alt="ASTRID">
-                </div>
-                <div class="chatbot-title-container">
-                    <h3 class="chatbot-title">ASTRID Assistant</h3>
-                    <p class="chatbot-subtitle">Virtual Helper</p>
-                </div>
-            </div>
-            <button id="chatbot-close-btn" onclick="toggleChatbot()">
-                &times;
-            </button>
+  <!-- Chat Window -->
+  <div id="chatbot-window">
+    <!-- Header -->
+    <div id="chatbot-header">
+      <div class="chatbot-header-left">
+        <div class="chatbot-avatar">
+          <img
+            src="{{ url_for('static', filename='images/astrid.png') }}"
+            alt="ASTRID"
+          />
         </div>
-
-        <!-- Main Body -->
-        <div id="chatbot-body">
-            
-            <!-- Quick Replies View -->
-            <div id="chatbot-options">
-                <div class="quick-reply-label">How can I help you today?</div>
-                <div id="quick-replies-container">
-                    <!-- Buttons injected via JS -->
-                </div>
-            </div>
-
-            <!-- Answer View -->
-            <div id="chatbot-answer">
-                <div id="chatbot-answer-header">
-                    <h4 id="chatbot-answer-title"></h4>
-                </div>
-                <div id="chatbot-answer-content">
-                    <div id="chatbot-answer-text">Loading...</div>
-                </div>
-                <div class="btn-container">
-                    <button id="chatbot-back-btn" onclick="showOptions()">
-                        <span>&#8592;</span> Back to Menu
-                    </button>
-                </div>
-            </div>
-
+        <div class="chatbot-title-container">
+          <h3 class="chatbot-title">ASTRID Assistant</h3>
+          <p class="chatbot-subtitle">Virtual Helper</p>
         </div>
+      </div>
+      <button id="chatbot-close-btn" onclick="toggleChatbot()">&times;</button>
     </div>
+
+    <!-- Main Body -->
+    <div id="chatbot-body">
+      <!-- Quick Replies View -->
+      <div id="chatbot-options">
+        <div class="quick-reply-label">How can I help you today?</div>
+        <div id="quick-replies-container">
+          <!-- Buttons injected via JS -->
+        </div>
+
+        <!-- Smart Mode Input Layer -->
+        <div
+          style="
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px dashed #bae6fd;
+          "
+        >
+          <div
+            class="quick-reply-label"
+            style="font-size: 13px; color: #64748b"
+          >
+            Or describe your pet's symptoms:
+          </div>
+          <form
+            id="smart-chat-form"
+            style="display: flex; gap: 8px; margin-top: 8px"
+          >
+            <input
+              type="text"
+              id="smart-chat-input"
+              placeholder="e.g. My dog is vomiting..."
+              required
+              style="
+                flex: 1;
+                padding: 12px;
+                border-radius: 12px;
+                border: 1px solid #bae6fd;
+                outline: none;
+                font-size: 13px;
+              "
+            />
+            <button
+              type="submit"
+              style="
+                background: #0ea5e9;
+                color: white;
+                border: none;
+                padding: 0 16px;
+                border-radius: 12px;
+                cursor: pointer;
+                font-weight: 600;
+                box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2);
+              "
+            >
+              Ask
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Answer View -->
+      <div id="chatbot-answer">
+        <div id="chatbot-answer-header">
+          <h4 id="chatbot-answer-title"></h4>
+        </div>
+        <div id="chatbot-answer-content">
+          <div id="chatbot-answer-text">Loading...</div>
+        </div>
+        <div class="btn-container">
+          <button id="chatbot-back-btn" onclick="showOptions()">
+            <span>&#8592;</span> Back to Menu
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-    const quickReplies = [
-        "How to Sign Up",
-        "How to Log In",
-        "How to Book Appointment",
-        "What are the Offers?",
-        "How to View My Pets",
-        "How to Check Services",
-        "How to Leave a Review"
-    ];
+  const quickReplies = [
+    "How to Sign Up",
+    "How to Log In",
+    "How to Book Appointment",
+    "What are the Offers?",
+    "How to View My Pets",
+    "How to Check Services",
+  ];
 
-    const chatbotWindow = document.getElementById('chatbot-window');
-    const optionsPanel = document.getElementById('chatbot-options');
-    const answerPanel = document.getElementById('chatbot-answer');
-    
-    // Initialize exactly on load
-    document.addEventListener('DOMContentLoaded', () => {
-        renderQuickReplies();
+  const chatbotWindow = document.getElementById("chatbot-window");
+  const optionsPanel = document.getElementById("chatbot-options");
+  const answerPanel = document.getElementById("chatbot-answer");
+
+  // Initialize exactly on load
+  document.addEventListener("DOMContentLoaded", () => {
+    renderQuickReplies();
+  });
+
+  function toggleChatbot() {
+    const isOpen = chatbotWindow.classList.contains("open");
+    if (isOpen) {
+      chatbotWindow.classList.remove("open");
+      setTimeout(() => {
+        chatbotWindow.style.display = "none";
+      }, 300); // match CSS transition
+    } else {
+      showOptions(); // Ensure we always open directly on options menu
+      chatbotWindow.style.display = "flex";
+      setTimeout(() => {
+        chatbotWindow.classList.add("open");
+      }, 10);
+    }
+  }
+
+  function renderQuickReplies() {
+    const container = document.getElementById("quick-replies-container");
+    container.innerHTML = "";
+    quickReplies.forEach((reply) => {
+      const btn = document.createElement("button");
+      btn.className = "quick-reply-btn";
+      btn.innerText = reply;
+      btn.onclick = () => fetchAnswer(reply);
+      container.appendChild(btn);
     });
+  }
 
-    function toggleChatbot() {
-        const isOpen = chatbotWindow.classList.contains('open');
-        if (isOpen) {
-            chatbotWindow.classList.remove('open');
-            setTimeout(() => {
-                chatbotWindow.style.display = 'none';
-            }, 300); // match CSS transition
+  function showOptions() {
+    answerPanel.style.display = "none";
+    optionsPanel.style.display = "flex";
+  }
+
+  async function fetchAnswer(query) {
+    // Switch views
+    optionsPanel.style.display = "none";
+    answerPanel.style.display = "flex";
+
+    document.getElementById("chatbot-answer-title").innerText = query;
+    document.getElementById("chatbot-answer-text").innerHTML =
+      "<div style='text-align: center; color: #9CA3AF;'>Fetching answer...</div>";
+
+    try {
+      // Hit backend endpoint for the smart reply
+      const response = await fetch("/api/v1/chatbot/astrid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: query }),
+      });
+
+      const data = await response.json();
+
+      setTimeout(() => {
+        const textContainer = document.getElementById("chatbot-answer-text");
+        if (data.mode === "scripted") {
+          // Use innerHTML so the rich HTML formatting from app.py renders correctly
+          textContainer.innerHTML = data.reply;
+        } else if (data.mode === "smart") {
+          // Hybrid Semantic Engine Formatting
+          let criticalStyle =
+            data.severity === "Critical"
+              ? "color:#DC2626; font-weight:bold;"
+              : "color:#D97706; font-weight:bold;";
+          let htmlData = `
+                        <div style="margin-bottom:12px;">
+                            <strong>🐾 Possible Conditions:</strong>
+                            <ul style="margin-top:4px; margin-bottom:0; padding-left:20px;">
+                                ${data.possible_conditions.map((c) => `<li>${c}</li>`).join("")}
+                            </ul>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <strong>⚠️ Severity:</strong> <span style="${criticalStyle}">${data.severity}</span>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <strong>🩺 Recommendation:</strong><br>
+                            ${data.recommendation}
+                        </div>
+                        <div style="margin-top:16px; padding-top:12px; border-top:1px dashed #BAE6FD; font-size:11px; color:#64748B;">
+                            <strong>📌 Note:</strong> This is an AI-assisted suggestion based on dataset matches (confidence: ${data.confidence}). This is not a final diagnosis.
+                        </div>
+                    `;
+          textContainer.innerHTML = htmlData;
         } else {
-            showOptions(); // Ensure we always open directly on options menu
-            chatbotWindow.style.display = 'flex';
-            setTimeout(() => {
-                chatbotWindow.classList.add('open');
-            }, 10);
+          textContainer.innerHTML =
+            data.reply || "Unable to determine response.";
         }
+      }, 300); // Small UI delay for smooth transition feeling
+    } catch (error) {
+      console.error("Chat error:", error);
+      document.getElementById("chatbot-answer-text").innerHTML =
+        "Sorry, I'm having trouble connecting right now. Please try again later.";
     }
+  }
 
-    function renderQuickReplies() {
-        const container = document.getElementById('quick-replies-container');
-        container.innerHTML = '';
-        quickReplies.forEach(reply => {
-            const btn = document.createElement('button');
-            btn.className = 'quick-reply-btn';
-            btn.innerText = reply;
-            btn.onclick = () => fetchAnswer(reply);
-            container.appendChild(btn);
-        });
+  // Attach form handler for Smart Mode
+  document.getElementById("smart-chat-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("smart-chat-input").value;
+    if (input.trim()) {
+      fetchAnswer(input);
+      document.getElementById("smart-chat-input").value = "";
     }
-
-    function showOptions() {
-        answerPanel.style.display = 'none';
-        optionsPanel.style.display = 'flex';
-    }
-
-    async function fetchAnswer(query) {
-        // Switch views
-        optionsPanel.style.display = 'none';
-        answerPanel.style.display = 'flex';
-
-        document.getElementById('chatbot-answer-title').innerText = query;
-        document.getElementById('chatbot-answer-text').innerHTML = "<div style='text-align: center; color: #9CA3AF;'>Fetching answer...</div>";
-
-        try {
-            // Hit backend endpoint for the smart reply
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message: query })
-            });
-            
-            const data = await response.json();
-            
-            setTimeout(() => {
-                // Use innerHTML so the rich HTML formatting from app.py renders correctly
-                document.getElementById('chatbot-answer-text').innerHTML = data.reply;
-            }, 300); // Small UI delay for smooth transition feeling
-            
-        } catch (error) {
-            console.error('Chat error:', error);
-            document.getElementById('chatbot-answer-text').innerHTML = "Sorry, I'm having trouble connecting right now. Please try again later.";
-        }
-    }
+  });
 </script>

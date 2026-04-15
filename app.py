@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+import jwt
 import os
 import json
 import re
@@ -11,19 +12,48 @@ from dotenv import load_dotenv
 # Load environment variables from .env file (for local development)
 load_dotenv()
 
+# --- ASTRID Hybrid ML Backend ---
+from chatbot_ml import AstridHybridML
+print("\n" + "="*50)
+print("ASTRID HYBRID ML: Initializing Knowledge Engine...")
+print("Please wait while the brain is being prepared...")
+print("="*50 + "\n")
+
+dataset_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dataset")
+astrid_ai = AstridHybridML(dataset_dir)
+
+print("\n" + "="*50)
+print("ASTRID HYBRID ML: System Ready and Online!")
+print("="*50 + "\n")
+# --------------------------------
+
 # ── ASTRID Chatbot (Scripted Navigation Layer) ─────────────────────────────────
 # Note: LLM and Dataset layers removed for a lightweight, scripted experience.
 
 
 
 app = Flask(__name__)
-app.secret_key = 'vetsync-secret-key-2024'
+app.secret_key = os.getenv('SECRET_KEY', 'vetsync-secret-key-2024')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vetsync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret-jwt-key')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
 db = SQLAlchemy(app)
 
-# ===================== MODELS =====================
+# Configure Secure Session Cookies
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=False, # Set to True if using HTTPS in production
+    SESSION_COOKIE_SAMESITE='Lax',
+)
+
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -34,8 +64,10 @@ class User(db.Model):
     contact       = db.Column(db.String(30))
     password_hash = db.Column(db.String(256), nullable=False)
     role          = db.Column(db.String(20), default='client') # client, staff, admin
+    is_active     = db.Column(db.Boolean, default=True)
     created_at    = db.Column(db.DateTime, default=datetime.utcnow)
     bookings      = db.relationship('Booking', backref='user', lazy=True)
+    notifications = db.relationship('Notification', backref='user', lazy=True)
 
     def set_password(self, p):   self.password_hash = generate_password_hash(p)
     def check_password(self, p): return check_password_hash(self.password_hash, p)
@@ -81,6 +113,12 @@ class Booking(db.Model):
     consent        = db.Column(db.Boolean, default=False)
     # Meta
     status         = db.Column(db.String(20), default='confirmed')
+    
+    @property
+    def no_show_risk(self):
+        """Calculates risk based on client's past cancellations."""
+        cancellations = Booking.query.filter_by(email=self.email, status='cancelled').count()
+        return cancellations > 1
     user_id        = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at     = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -99,6 +137,27 @@ class ContactMessage(db.Model):
     subject    = db.Column(db.String(200))
     message    = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    id            = db.Column(db.Integer, primary_key=True)
+    user_id       = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    title         = db.Column(db.String(100), nullable=False)
+    message       = db.Column(db.Text, nullable=False)
+    read          = db.Column(db.Boolean, default=False)
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Report(db.Model):
+    __tablename__ = 'reports'
+    id            = db.Column(db.Integer, primary_key=True)
+    title         = db.Column(db.String(150), nullable=False)
+    category      = db.Column(db.String(50), nullable=False)
+    description   = db.Column(db.Text, nullable=False)
+    status        = db.Column(db.String(20), default='Pending') # Pending, Reviewed, Resolved
+    admin_comment = db.Column(db.Text, nullable=True)
+    user_id       = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 
 # ===================== CONSTANTS =====================
@@ -179,101 +238,80 @@ def staff_required(f):
         return f(*args, **kwargs)
     return decorated
 
-def booked_slots_on(q_date):
-    taken = Booking.query.filter_by(date=q_date, status='confirmed').all()
-    return {b.slot for b in taken}
+def get_no_show_risk(email):
+    """Predicts risk based on cancellation history."""
+    if not email: return False
+    cancellations = Booking.query.filter_by(email=email, status='cancelled').count()
+    return cancellations > 1
 
+# ===================== JWT UTILITIES =====================
 
-# ===================== ROUTES =====================
+def create_jwt_token(user_id, role):
+    payload = {
+        'user_id': user_id,
+        'role': role,
+        'exp': datetime.utcnow() + app.config['JWT_ACCESS_TOKEN_EXPIRES']
+    }
+    return jwt.encode(payload, app.config['JWT_SECRET_KEY'], algorithm='HS256')
 
-@app.route('/')
-def index():
-    services = Service.query.all()
-    today    = date.today().isoformat()
-    return render_template('index.html', services=services,
-                           pet_types=PET_TYPES, today=today)
-
-
-# ── Booking page (auth-guarded) ──────────────────────────────
-
-@app.route('/booking')
-@login_required
-def booking_page():
-    user     = current_user()
-    services = Service.query.all()
-    today    = date.today().isoformat()
-    return render_template('booking_page.html', user=user,
-                           services=services, pet_types=PET_TYPES, today=today)
-
-
-@app.route('/book', methods=['POST'])
-@login_required
-def book():
-    g    = lambda k: request.form.get(k, '').strip()
-    name       = g('name')
-    email      = g('email')
-    phone      = g('phone')
-    pet_type   = g('pet_type')
-    service_id = g('service')
-    slot       = g('slot')
-    date_str   = g('date')
-
-    if not all([name, email, phone, pet_type, service_id, slot, date_str]):
-        flash('Please fill in all required fields.', 'error')
-        return redirect(url_for('booking_page'))
-
+def decode_jwt_token(token):
     try:
-        booking_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-    except ValueError:
-        flash('Invalid date selected.', 'error')
-        return redirect(url_for('booking_page'))
+        return jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256']), 200
+    except jwt.ExpiredSignatureError:
+        return {'message': 'Token expired'}, 401
+    except jwt.InvalidTokenError:
+        return {'message': 'Invalid token'}, 401
 
-    if booking_date < date.today():
-        flash('Cannot book a date in the past.', 'error')
-        return redirect(url_for('booking_page'))
+def jwt_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            parts = request.headers['Authorization'].split()
+            if len(parts) == 2 and parts[0] == 'Bearer':
+                token = parts[1]
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 401
+        
+        decoded_token, status_code = decode_jwt_token(token)
+        if status_code != 200:
+            return jsonify(decoded_token), status_code
+        
+        current_user_jwt = db.session.get(User, decoded_token['user_id'])
+        if not current_user_jwt:
+            return jsonify({'message': 'User not found'}), 401
+        
+        return f(current_user_jwt, *args, **kwargs)
+    return decorated_function
 
-    if slot in booked_slots_on(booking_date):
-        flash(f'Sorry! {slot} on {booking_date.strftime("%b %d")} was just booked. Please choose another slot.', 'error')
-        return redirect(url_for('booking_page'))
-
-    service = db.session.get(Service, service_id)
-    if not service:
-        flash('Invalid service selected.', 'error')
-        return redirect(url_for('booking_page'))
-
-    user    = current_user()
-    consent = request.form.get('consent') == 'on'
-
-    booking = Booking(
-        service_id      = service.id,
-        slot            = slot,
-        date            = booking_date,
-        name            = name,
-        email           = email,
-        phone           = phone,
-        alt_phone       = g('alt_phone'),
-        address         = g('address'),
-        pet_name        = g('pet_name'),
-        pet_type        = pet_type,
-        pet_breed       = g('pet_breed'),
-        pet_sex         = g('pet_sex'),
-        pet_age         = g('pet_age'),
-        pet_weight      = g('pet_weight'),
-        pet_color       = g('pet_color'),
-        visit_reason    = g('visit_reason'),
-        medical_history = g('medical_history'),
-        allergies       = g('allergies'),
-        notes           = g('notes'),
-        payment_method  = g('payment_method'),
-        consent         = consent,
-        status          = 'confirmed',
-        user_id         = user.id,
-    )
-    db.session.add(booking)
-    db.session.commit()
-
-    flash(f'🎉 Booking confirmed! {service.name} for {g("pet_name") or "your pet"} on {booking_date.strftime("%B %d, %Y")} at {slot}.', 'success')
-    return redirect(url_for('dashboard'))
+def role_required(roles):
+    def decorator(f):
+        from functools import wraps
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            token = None
+            if 'Authorization' in request.headers:
+                parts = request.headers['Authorization'].split()
+                if len(parts) == 2 and parts[0] == 'Bearer':
+                    token = parts[1]
+            if not token:
+                return jsonify({'message': 'Token is missing!'}), 401
+            
+            decoded_token, status_code = decode_jwt_token(token)
+            if status_code != 200:
+                return jsonify(decoded_token), status_code
+            
+            current_user_jwt = db.session.get(User, decoded_token['user_id'])
+            if not current_user_jwt:
+                return jsonify({'message': 'User not found'}), 401
+            
+            if current_user_jwt.role not in roles:
+                return jsonify({'message': 'Access denied: Insufficient role'}), 403
+            
+            return f(current_user_jwt, *args, **kwargs)
+        return decorated_function
+    return decorator
 
 
 # ── API ──────────────────────────────────────────────────────
@@ -337,8 +375,8 @@ def _build_health_reply(entry, species_filter=None):
     }
 
 
-@app.route('/api/chat', methods=['POST'])
-def api_chat():
+@app.route('/api/v1/chatbot/astrid', methods=['POST'])
+def api_chat_hybrid():
     data    = request.get_json() or {}
     message = data.get('message', '').lower().strip()
 
@@ -354,21 +392,20 @@ def api_chat():
         "how to log in":    "<strong>To log in:</strong><br>Click 'Log In' on the top right and enter your registered email and password."
     }
 
+    # 1. SCRIPTED MODE
     for key, answer in faq_answers.items():
         if key in message:
-            return jsonify({'reply': answer, 'type': 'faq'})
+            return jsonify({'mode': 'scripted', 'reply': answer, 'type': 'faq'})
 
-    # Default fallback for unmatched queries
-    fallback = (
-        "I'm ASTRID, your VetSync clinic assistant!\n\n"
-        "Please select one of the options from the menu to get started, "
-        "or contact our clinic directly for specific medical advice."
-    )
-    return jsonify({'reply': fallback, 'type': 'fallback', 'show_booking': False})
+    # 2. SMART MODE
+    smart_response = astrid_ai.get_smart_response(message)
+    return jsonify(smart_response)
 
 
+def booked_slots_on(q_date):
+    taken = Booking.query.filter_by(date=q_date, status='confirmed').all()
+    return {b.slot for b in taken}
 
-# ─── /api/chat/health — Species-filtered pet health endpoint ─────────────────
 @app.route('/api/chat/health', methods=['POST'])
 def api_chat_health():
     """
@@ -472,6 +509,103 @@ def get_services():
                     for s in Service.query.all()])
 
 
+# ===================== ROUTES =====================
+
+@app.route('/')
+def index():
+    services = Service.query.all()
+    today    = date.today().isoformat()
+    return render_template('index.html', services=services,
+                           pet_types=PET_TYPES, today=today)
+
+
+# ── Booking page (auth-guarded) ──────────────────────────────
+
+@app.route('/booking')
+@login_required
+def booking_page():
+    user     = current_user()
+    services = Service.query.all()
+    today    = date.today().isoformat()
+    return render_template('booking_page.html', user=user,
+                           services=services, pet_types=PET_TYPES, today=today)
+
+
+@app.route('/offline')
+def offline_page():
+    return render_template('offline.html')
+
+
+@app.route('/book', methods=['POST'])
+@login_required
+def book():
+    g    = lambda k: request.form.get(k, '').strip()
+    name       = g('name')
+    email      = g('email')
+    phone      = g('phone')
+    pet_type   = g('pet_type')
+    service_id = g('service')
+    slot       = g('slot')
+    date_str   = g('date')
+
+    if not all([name, email, phone, pet_type, service_id, slot, date_str]):
+        flash('Please fill in all required fields.', 'error')
+        return redirect(url_for('booking_page'))
+
+    try:
+        booking_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        flash('Invalid date selected.', 'error')
+        return redirect(url_for('booking_page'))
+
+    if booking_date < date.today():
+        flash('Cannot book a date in the past.', 'error')
+        return redirect(url_for('booking_page'))
+
+    if slot in booked_slots_on(booking_date):
+        flash(f'Sorry! {slot} on {booking_date.strftime("%b %d")} was just booked. Please choose another slot.', 'error')
+        return redirect(url_for('booking_page'))
+
+    service = db.session.get(Service, service_id)
+    if not service:
+        flash('Invalid service selected.', 'error')
+        return redirect(url_for('booking_page'))
+
+    user    = current_user()
+    consent = request.form.get('consent') == 'on'
+
+    booking = Booking(
+        service_id      = service.id,
+        slot            = slot,
+        date            = booking_date,
+        name            = name,
+        email           = email,
+        phone           = phone,
+        alt_phone       = g('alt_phone'),
+        address         = g('address'),
+        pet_name        = g('pet_name'),
+        pet_type        = pet_type,
+        pet_breed       = g('pet_breed'),
+        pet_sex         = g('pet_sex'),
+        pet_age         = g('pet_age'),
+        pet_weight      = g('pet_weight'),
+        pet_color       = g('pet_color'),
+        visit_reason    = g('visit_reason'),
+        medical_history = g('medical_history'),
+        allergies       = g('allergies'),
+        notes           = g('notes'),
+        payment_method  = g('payment_method'),
+        consent         = consent,
+        status          = 'confirmed',
+        user_id         = user.id,
+    )
+    db.session.add(booking)
+    db.session.commit()
+
+    flash(f'🎉 Booking confirmed! {service.name} for {g("pet_name") or "your pet"} on {booking_date.strftime("%B %d, %Y")} at {slot}.', 'success')
+    return redirect(url_for('dashboard'))
+
+
 # ── Auth ─────────────────────────────────────────────────────
 
 @app.route('/signup', methods=['GET','POST'])
@@ -500,24 +634,45 @@ def signup():
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
-        em = request.form.get('email','').strip().lower()
-        pw = request.form.get('password','')
-        u  = User.query.filter_by(email=em).first()
-        if u and u.check_password(pw):
-            session['user_id'] = u.id
-            session['user']    = u.first_name
-            flash(f'Welcome back, {u.first_name}!', 'success')
+        email    = request.form.get('email','').strip().lower()
+        password = request.form.get('password','')
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.check_password(password):
+            if not user.is_active:
+                flash('Your account has been deactivated. Please contact support.', 'error')
+                return render_template('login.html')
+            session['user_id'] = user.id
+            flash('Logged in successfully.', 'success')
             
-            # Role-based redirection
-            if u.role == 'admin':
+            # Role-based redirection for web interface
+            if user.role == 'admin':
                 return redirect(url_for('admin_dashboard'))
-            elif u.role == 'staff':
+            elif user.role == 'staff':
                 return redirect(url_for('staff_dashboard'))
             else:
                 next_url = request.args.get('next') or url_for('dashboard')
                 return redirect(next_url)
-        flash('Invalid email or password.', 'error')
+        else:
+            flash('Invalid email or password.', 'error')
+            return render_template('login.html')
     return render_template('login.html')
+
+@app.route('/api/v1/login', methods=['POST'])
+def api_v1_login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user and user.check_password(password):
+        if not user.is_active:
+            return jsonify({'message': 'Account deactivated'}), 401
+        access_token = create_jwt_token(user.id, user.role)
+        return jsonify(access_token=access_token, user_id=user.id, role=user.role), 200
+    else:
+        return jsonify({'message': 'Invalid credentials'}), 401
 
 
 @app.route('/logout')
@@ -692,6 +847,328 @@ def cancel_booking(bid):
     flash('Booking cancelled successfully.', 'success')
     return redirect(url_for('dashboard'))
 
+
+# ── API v1 (PWA Endpoints) ───────────────────────────────────
+
+from flask import Blueprint
+
+api_v1 = Blueprint('api_v1', __name__, url_prefix='/api/v1')
+
+@api_v1.route('/schedule', methods=['GET'])
+@jwt_required
+@role_required(['staff', 'admin'])
+def get_schedule(current_user_jwt):
+    blocks = DoctorAvailability.query.all()
+    return jsonify([{'date': b.date.isoformat(), 'slot': b.slot, 'status': b.status} for b in blocks]), 200
+
+@api_v1.route('/schedule/block', methods=['POST'])
+@jwt_required
+@role_required(['staff', 'admin'])
+def block_time(current_user_jwt):
+    data = request.get_json()
+    try:
+        d = datetime.strptime(data['date'], '%Y-%m-%d').date()
+    except:
+        return jsonify({'error': 'Invalid date format'}), 400
+        
+    existing = DoctorAvailability.query.filter_by(date=d, slot=data['slot']).first()
+    if not existing:
+        db.session.add(DoctorAvailability(date=d, slot=data['slot'], status='unavailable'))
+        db.session.commit()
+    return jsonify({'message': 'Time slot blocked successfully'}), 201
+
+@api_v1.route('/schedule/unblock', methods=['DELETE'])
+@jwt_required
+@role_required(['staff', 'admin'])
+def unblock_time(current_user_jwt):
+    data = request.get_json()
+    try:
+        d = datetime.strptime(data['date'], '%Y-%m-%d').date()
+    except:
+        return jsonify({'error': 'Invalid date format'}), 400
+        
+    existing = DoctorAvailability.query.filter_by(date=d, slot=data['slot']).first()
+    if existing:
+        db.session.delete(existing)
+        db.session.commit()
+    return jsonify({'message': 'Time slot is now available'}), 200
+
+@api_v1.route('/users', methods=['GET', 'POST'])
+@jwt_required
+@role_required(['admin'])
+def manage_users(current_user_jwt):
+    if request.method == 'GET':
+        users = User.query.all()
+        return jsonify([{
+            'id': u.id, 'first_name': u.first_name, 'last_name': u.last_name,
+            'email': u.email, 'role': u.role, 'contact': u.contact, 'is_active': u.is_active
+        } for u in users]), 200
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        em = data['email'].strip().lower()
+        
+        if User.query.filter_by(email=em).first():
+            return jsonify({'error': 'Email already exists'}), 409
+            
+        new_user = User(
+            first_name=data.get('first_name', ''),
+            last_name=data.get('last_name', ''),
+            email=em,
+            contact=data.get('contact', ''),
+            role=data.get('role', 'client') # Default to client if not specified
+        )
+        new_user.set_password(data.get('password', 'default123')) # Default password for new users
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'User created successfully', 'user_id': new_user.id}), 201
+
+@api_v1.route('/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required
+@role_required(['admin'])
+def manage_single_user(current_user_jwt, user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    if request.method == 'GET':
+        return jsonify({
+            'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name,
+            'email': user.email, 'role': user.role, 'contact': user.contact, 'is_active': user.is_active
+        }), 200
+
+    if request.method == 'PUT':
+        data = request.get_json()
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.email = data.get('email', user.email).strip().lower()
+        user.contact = data.get('contact', user.contact)
+        user.role = data.get('role', user.role)
+        if 'is_active' in data:
+            user.is_active = data['is_active']
+        if 'password' in data and data['password']:
+            user.set_password(data['password'])
+        db.session.commit()
+        return jsonify({'message': 'User updated successfully'}), 200
+
+    if request.method == 'DELETE':
+        # For security, consider deactivating instead of hard deleting
+        # For now, we'll hard delete as per common practice in simple APIs
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'message': 'User deleted successfully'}), 200
+
+
+@api_v1.route('/appointments', methods=['GET', 'POST'])
+@jwt_required
+def api_appointments(current_user_jwt):
+    if request.method == 'GET':
+        if current_user_jwt.role in ['admin', 'staff']:
+            bookings = Booking.query.all()
+        else: # client
+            bookings = Booking.query.filter_by(user_id=current_user_jwt.id).all()
+            
+        return jsonify([{
+            'id': b.id,
+            'service_id': b.service_id,
+            'slot': b.slot,
+            'date': b.date.isoformat(),
+            'name': b.name,
+            'email': b.email,
+            'phone': b.phone,
+            'pet_name': b.pet_name,
+            'pet_type': b.pet_type,
+            'status': b.status,
+            'user_id': b.user_id,
+            'no_show_risk': get_no_show_risk(b.email)
+        } for b in bookings]), 200
+
+    if request.method == 'POST':
+        data = request.get_json()
+        required_fields = ['service_id', 'slot', 'date', 'name', 'email', 'phone', 'pet_type']
+        if not all(field in data for field in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+
+        try:
+            booking_date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({'error': 'Invalid date format'}), 400
+
+        if booking_date < date.today():
+            return jsonify({'error': 'Cannot book a date in the past'}), 400
+
+        if data['slot'] in booked_slots_on(booking_date):
+            return jsonify({'error': f"Sorry! {data['slot']} on {data['date']} was just booked. Please choose another slot."}), 409
+
+        service = db.session.get(Service, data['service_id'])
+        if not service:
+            return jsonify({'error': 'Invalid service selected.'}), 400
+
+        booking = Booking(
+            service_id      = data['service_id'],
+            slot            = data['slot'],
+            date            = booking_date,
+            name            = data['name'],
+            email           = data['email'],
+            phone           = data['phone'],
+            alt_phone       = data.get('alt_phone'),
+            address         = data.get('address'),
+            pet_name        = data.get('pet_name'),
+            pet_type        = data['pet_type'],
+            pet_breed       = data.get('pet_breed'),
+            pet_sex         = data.get('pet_sex'),
+            pet_age         = data.get('pet_age'),
+            pet_weight      = data.get('pet_weight'),
+            pet_color       = data.get('pet_color'),
+            visit_reason    = data.get('visit_reason'),
+            medical_history = data.get('medical_history'),
+            allergies       = data.get('allergies'),
+            notes           = data.get('notes'),
+            payment_method  = data.get('payment_method'),
+            consent         = data.get('consent', False),
+            status          = 'confirmed',
+            user_id         = current_user_jwt.id,
+        )
+        db.session.add(booking)
+        db.session.commit()
+        return jsonify({'message': 'Booking created successfully', 'booking_id': booking.id}), 201
+
+@api_v1.route('/appointments/<int:booking_id>', methods=['PUT'])
+@jwt_required
+@role_required(['staff', 'admin'])
+def update_appointment(current_user_jwt, booking_id):
+    booking = db.session.get(Booking, booking_id)
+    if not booking:
+        return jsonify({'error': 'Booking not found'}), 404
+        
+    data = request.get_json()
+    if 'status' in data:
+        if data['status'] not in ['confirmed', 'pending', 'cancelled', 'completed']:
+            return jsonify({'error': 'Invalid status'}), 400
+        booking.status = data['status']
+        
+    db.session.commit()
+    return jsonify({'message': 'Booking updated successfully', 'status': booking.status}), 200
+
+
+@api_v1.route('/notifications', methods=['GET', 'POST'])
+@jwt_required
+def api_notifications(current_user_jwt):
+    if request.method == 'GET':
+        notifications = Notification.query.filter_by(user_id=current_user_jwt.id).order_by(Notification.created_at.desc()).all()
+        return jsonify([{
+            'id': n.id,
+            'title': n.title,
+            'message': n.message,
+            'read': n.read,
+            'created_at': n.created_at.isoformat()
+        } for n in notifications]), 200
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        title = data.get('title')
+        message = data.get('message')
+        target_user_id = data.get('user_id') # Optional: for admin to send to specific user
+
+        if not title or not message:
+            return jsonify({'error': 'Title and message are required'}), 400
+
+        if target_user_id and current_user_jwt.role == 'admin':
+            user_to_notify = db.session.get(User, target_user_id)
+            if not user_to_notify:
+                return jsonify({'error': 'Target user not found'}), 404
+            new_notification = Notification(user_id=target_user_id, title=title, message=message)
+        else:
+            new_notification = Notification(user_id=current_user_jwt.id, title=title, message=message)
+        
+        db.session.add(new_notification)
+        db.session.commit()
+        return jsonify({'message': 'Notification sent successfully', 'notification_id': new_notification.id}), 201
+
+@api_v1.route('/workload', methods=['GET'])
+@jwt_required
+@role_required(['staff', 'admin'])
+def get_workload_api(current_user_jwt):
+    today = date.today()
+    counts = {}
+    for slot in ["8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+                "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM",
+                "6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"]:
+        count = Booking.query.filter_by(date=today, slot=slot, status='confirmed').count()
+        counts[slot] = count
+    
+    total_slots = 14 # Total working slots
+    confirmed_today = Booking.query.filter_by(date=today, status='confirmed').count()
+    percentage = (confirmed_today / total_slots * 100) if total_slots > 0 else 0
+    
+    return jsonify({
+        'hourly': counts,
+        'total_confirmed': confirmed_today,
+        'percentage': round(percentage, 1)
+    }), 200
+
+
+@api_v1.route('/reports', methods=['GET', 'POST'])
+@jwt_required
+@role_required(['staff', 'admin'])
+def api_reports(current_user_jwt):
+    if request.method == 'GET':
+        if current_user_jwt.role == 'admin':
+            reports = Report.query.order_by(Report.created_at.desc()).all()
+        else:
+            reports = Report.query.filter_by(user_id=current_user_jwt.id).order_by(Report.created_at.desc()).all()
+            
+        return jsonify([{
+            'id': r.id,
+            'title': r.title,
+            'category': r.category,
+            'description': r.description,
+            'status': r.status,
+            'admin_comment': r.admin_comment,
+            'user_id': r.user_id,
+            'staff_name': db.session.get(User, r.user_id).first_name + " " + db.session.get(User, r.user_id).last_name if db.session.get(User, r.user_id) else "Unknown",
+            'created_at': r.created_at.strftime('%b %d, %Y')
+        } for r in reports]), 200
+
+    if request.method == 'POST':
+        data = request.get_json()
+        if not data.get('title') or not data.get('description'):
+            return jsonify({'error': 'Title and description are required'}), 400
+            
+        report = Report(
+            title=data.get('title'),
+            category=data.get('category', 'Other'),
+            description=data.get('description'),
+            user_id=current_user_jwt.id
+        )
+        db.session.add(report)
+        db.session.commit()
+        return jsonify({'message': 'Report submitted successfully'}), 201
+
+@api_v1.route('/reports/<int:report_id>', methods=['PUT', 'DELETE'])
+@jwt_required
+@role_required(['admin'])
+def api_report_detail(current_user_jwt, report_id):
+    report = db.session.get(Report, report_id)
+    if not report:
+        return jsonify({'error': 'Report not found'}), 404
+        
+    if request.method == 'PUT':
+        data = request.get_json()
+        if 'status' in data:
+            report.status = data['status']
+        if 'admin_comment' in data:
+            report.admin_comment = data['admin_comment']
+        db.session.commit()
+        return jsonify({'message': 'Report updated successfully'})
+        
+    if request.method == 'DELETE':
+        db.session.delete(report)
+        db.session.commit()
+        return jsonify({'message': 'Report deleted successfully'})
+
+
+app.register_blueprint(api_v1)
 
 # ===================== INIT =====================
 

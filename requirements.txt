@@ -4,4 +4,8 @@ SQLAlchemy==2.0.25
 Werkzeug==3.0.1
 requests
 python-dotenv
-
+PyJWT==2.8.0
+scikit-learn
+pandas
+sentence-transformers
+datasets

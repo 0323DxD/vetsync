@@ -18,6 +18,19 @@
         --status-pending-text: #854D0E;
         --status-cancelled-bg: #FEE2E2;
         --status-cancelled-text: #991B1B;
+
+        /* Calendar Slot Colors */
+        --slot-available-bg: #D1FAE5; /* Light Green */
+        --slot-available-border: #34D399;
+        --slot-available-text: #065F46;
+
+        --slot-booked-bg: #E2E8F0; /* Light Gray */
+        --slot-booked-border: #94A3B8;
+        --slot-booked-text: #475569;
+
+        --slot-unavailable-bg: #FEE2E2; /* Light Red */
+        --slot-unavailable-border: #EF4444;
+        --slot-unavailable-text: #991B1B;
     }
 
     body {
@@ -63,6 +76,14 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
+        position: relative; /* For icon positioning */
+    }
+
+    .stat-icon {
+        font-size: 28px;
+        color: var(--dash-primary);
+        margin-bottom: 8px;
+        line-height: 1;
     }
 
     .stat-label {
@@ -164,25 +185,32 @@
     }
 
     .slot-item {
-        background: #E0F2FE;
-        border: 1px solid #BAE6FD;
-        border-left: 3px solid var(--dash-primary);
         border-radius: 4px;
         padding: 4px 8px;
         font-size: 11px;
-        color: var(--dash-primary-dark);
         margin-bottom: 4px;
         cursor: pointer;
         transition: all 0.2s;
+        border-left: 3px solid; /* For color coding */
     }
     .slot-item:hover { transform: scale(1.02); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     
+    .slot-available {
+        background: var(--slot-available-bg);
+        border-color: var(--slot-available-border);
+        color: var(--slot-available-text);
+    }
+
+    .slot-booked {
+        background: var(--slot-booked-bg);
+        border-color: var(--slot-booked-border);
+        color: var(--slot-booked-text);
+    }
+
     .slot-unavailable {
-        background: #F1F5F9;
-        border: 1px dashed #CBD5E1;
-        border-left: 3px solid #94A3B8;
-        color: #64748B;
-        text-align: center;
+        background: var(--slot-unavailable-bg);
+        border-color: var(--slot-unavailable-border);
+        color: var(--slot-unavailable-text);
     }
 
     .cal-interactive-cell {
@@ -272,113 +300,154 @@
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .modal-title { font-size: 20px; font-weight: 600; margin: 0; }
     .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #94A3B8; }
+
+    @media (max-width: 900px) {
+        .dash-container { padding: 0 15px; }
+        .dash-header { flex-direction: column; align-items: flex-start; }
+        .stats-grid { grid-template-columns: 1fr; }
+        .cal-grid { grid-template-columns: 80px repeat(auto-fit, minmax(100px, 1fr)); }
+        .cal-header-cell, .cal-time-col { font-size: 10px; padding: 8px 4px; }
+        .slot-item { font-size: 10px; padding: 2px 4px; }
+        .dash-table th, .dash-table td { padding: 12px 10px; font-size: 12px; }
+        .modal-box { max-width: 90%; padding: 20px; }
+    }
 </style>
 
-<div class="dash-container">
-    <div class="dash-header">
-        <div>
-            <h1 class="dash-title">Veterinarian Dashboard</h1>
-            <p style="color: var(--dash-text-muted); margin-top: 6px; font-size: 15px;">Welcome back, <strong>Dr. {{ user.last_name }}</strong></p>
-        </div>
-        <button class="cal-btn primary" onclick="openAvailabilityModal()" style="padding: 10px 20px;">Manage Availability</button>
-    </div>
-
-    <!-- STATS ROW -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <span class="stat-label">📅 Today's Appts</span>
-            <span class="stat-value">{{ today_appointments }}</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-label">⏳ Upcoming</span>
-            <span class="stat-value">{{ upcoming_appointments }}</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-label">🔔 Pending Approvals</span>
-            <span class="stat-value">{{ pending_bookings }}</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-label">🐾 Patients This Month</span>
-            <span class="stat-value">{{ total_patients_this_month }}</span>
-        </div>
-    </div>
-
-    <!-- CALENDAR SECTION -->
-    <div class="section-header">
-        <h2 class="section-title">Schedule Overview</h2>
-    </div>
+<div class="dash-container" style="display: grid; grid-template-columns: 1fr 340px; gap: 30px; align-items: start;">
     
-    <div class="calendar-container">
-        <div class="cal-controls">
-            <button class="cal-btn" id="prevWeekBtn">← Previous Week</button>
-            <h3 style="margin:0; font-size: 16px;" id="currentWeekLabel">Current Week</h3>
-            <button class="cal-btn" id="nextWeekBtn">Next Week →</button>
+    <div class="main-content">
+        <div class="dash-header">
+            <div>
+                <h1 class="dash-title">Veterinarian Dashboard</h1>
+                <p style="color: var(--dash-text-muted); margin-top: 6px; font-size: 15px;">Welcome back, <strong>Dr. {{ user.last_name }}</strong></p>
+            </div>
+            <button class="cal-btn primary" onclick="openAvailabilityModal()" style="padding: 10px 20px;">Manage Availability</button>
         </div>
 
-        <div class="cal-grid" id="calendarGrid">
-            <!-- Rendered via JS -->
+        <!-- STATS ROW -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <span class="stat-label">Today's Appts</span>
+                <span class="stat-value">{{ today_appointments }}</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <span class="stat-label">Upcoming</span>
+                <span class="stat-value">{{ upcoming_appointments }}</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔔</div>
+                <span class="stat-label">Pending</span>
+                <span class="stat-value">{{ pending_bookings }}</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🐾</div>
+                <span class="stat-label">Total Patients</span>
+                <span class="stat-value">{{ total_patients_this_month }}</span>
+            </div>
+        </div>
+
+        <!-- CALENDAR SECTION -->
+        <div class="section-header" id="schedule">
+            <h2 class="section-title">Schedule Overview</h2>
+        </div>
+        
+        <div class="calendar-container" style="overflow-x: auto;">
+            <div class="cal-controls" style="min-width: 600px;">
+                <button class="cal-btn" id="prevWeekBtn">← Previous Week</button>
+                <h3 style="margin:0; font-size: 16px;" id="currentWeekLabel">Current Week</h3>
+                <button class="cal-btn" id="nextWeekBtn">Next Week →</button>
+            </div>
+            <div class="cal-grid" id="calendarGrid" style="min-width: 600px;">
+                <!-- Rendered via JS -->
+            </div>
+        </div>
+
+        <!-- ALL BOOKINGS TABLE -->
+        <div class="section-header" id="appointments">
+            <h2 class="section-title">Latest Appointments</h2>
+            <a href="#" class="cal-btn">View Full Registry</a>
+        </div>
+
+        <div class="table-container">
+            <table class="dash-table">
+                <thead class="table-header-row">
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Client / Patient</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingsTableBody">
+                    {% for b in bookings[:12] %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 600;">{{ b.date.strftime('%b %d') }}</div>
+                            <div style="font-size: 12px; color: var(--dash-text-muted);">{{ b.slot }}</div>
+                        </td>
+                        <td>
+                            <div style="display:flex; align-items:center;">
+                                <div class="pet-avatar">
+                                    {% if b.pet_type.lower() == 'cat' %}🐱
+                                    {% elif b.pet_type.lower() == 'dog' %}🐶
+                                    {% else %}🐾{% endif %}
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div>
+                                        <div style="font-weight: 600;">{{ b.pet_name or 'N/A' }}</div>
+                                        <div style="font-size: 11px; color: var(--dash-text-muted);">{{ b.name }}</div>
+                                    </div>
+                                    {% if b.status == 'confirmed' and loop.index % 4 == 0 %} 
+                                        <!-- Simulating no-show risk indicator for demo -->
+                                        <span title="High No-Show Risk" style="cursor:help;">⚠️</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 13px;">{{ b.service_ref.name }}</div>
+                        </td>
+                        <td>
+                            <span class="status-pill {% if b.status == 'confirmed' %}status-confirmed{% elif b.status == 'cancelled' %}status-cancelled{% else %}status-pending{% endif %}">
+                                {{ b.status | title }}
+                            </span>
+                        </td>
+                        <td style="display:flex; gap:8px;">
+                            <button class="cal-btn" style="padding: 6px 12px; font-size:12px;" onclick="viewDetail('{{ b.id }}')">Details</button>
+                            {% if b.status == 'pending' %}
+                            <button class="cal-btn primary" style="padding: 6px 12px; font-size:12px;" onclick="updateStatus('{{ b.id }}', 'confirmed')">Confirm</button>
+                            {% elif b.status == 'confirmed' %}
+                            <button class="cal-btn" style="padding: 6px 12px; font-size:12px; background:#DCFCE7; color:#166534; border-color:#34D399;" onclick="updateStatus('{{ b.id }}', 'completed')">Check Out</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- ALL BOOKINGS TABLE -->
-    <div class="section-header">
-        <h2 class="section-title">Latest Bookings</h2>
-        <a href="#" class="cal-btn">View All</a>
-    </div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <!-- Clinic Performance Graph -->
+        <div class="section-card" id="performance">
+            <h2 class="section-title" style="margin-bottom: 12px;">Clinic Performance</h2>
+            <div style="height: 250px; width: 100%; position: relative;">
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <p id="performanceAdvice" style="font-size:12px; color:var(--dash-text-muted); margin-top:10px; text-align:center;">Analyzing workload data...</p>
+        </div>
 
-    <div class="table-container">
-        <table class="dash-table">
-            <thead class="table-header-row">
-                <tr>
-                    <th>Date & Time</th>
-                    <th>Client</th>
-                    <th>Patient</th>
-                    <th>Service Request</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for b in bookings[:10] %}
-                <tr>
-                    <td>
-                        <div style="font-weight: 500;">{{ b.date.strftime('%b %d, %Y') }}</div>
-                        <div style="font-size: 13px; color: var(--dash-text-muted); margin-top: 2px;">{{ b.slot }}</div>
-                    </td>
-                    <td>
-                        <div style="font-weight: 500;">{{ b.name }}</div>
-                        <div style="font-size: 13px; color: var(--dash-text-muted); margin-top: 2px;">{{ b.phone }}</div>
-                    </td>
-                    <td>
-                        <div style="display: flex; align-items: center;">
-                            <div class="pet-avatar">
-                                {% if b.pet_type.lower() == 'cat' %}🐱
-                                {% elif b.pet_type.lower() == 'bird' %}🦜
-                                {% elif b.pet_type.lower() == 'rabbit' %}🐰
-                                {% else %}🐶{% endif %}
-                            </div>
-                            <div>
-                                <div style="font-weight: 500;">{{ b.pet_name or 'N/A' }}</div>
-                                <div style="font-size: 13px; color: var(--dash-text-muted); margin-top: 2px;">{{ b.pet_breed or 'Unknown' }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div style="font-weight: 500;">{{ b.service_ref.name }}</div>
-                        {% if b.visit_reason %}
-                        <div style="font-size: 13px; color: var(--dash-text-muted); margin-top: 2px; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ b.visit_reason }}">{{ b.visit_reason }}</div>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <span class="status-pill {% if b.status == 'confirmed' %}status-confirmed{% elif b.status == 'cancelled' %}status-cancelled{% else %}status-pending{% endif %}">
-                            {{ b.status | title }}
-                        </span>
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--dash-text-muted);">No bookings found in the system.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- Submit Report Action -->
+        <div class="section-card" id="reports">
+            <h2 class="section-title" style="margin-bottom: 12px;">Submit Report</h2>
+            <p style="font-size:13px; color:var(--dash-text-muted); margin-bottom:16px;">File end-of-day summaries, incident reports, or system feedback.</p>
+            <button class="cal-btn primary" style="width:100%; justify-content:center;" onclick="document.getElementById('reportModal').style.display='flex'">+ Create New Report</button>
+        </div>
+
     </div>
 </div>
 
@@ -389,171 +458,213 @@
             <h3 class="modal-title">Appointment Details</h3>
             <button class="close-btn" onclick="closeModal('detailsModal')">&times;</button>
         </div>
-        <div id="modalContent" style="font-size: 15px; line-height: 1.6;">
-            <!-- JS Inject -->
-        </div>
-        <div style="margin-top: 24px; text-align: right;">
-            <button class="cal-btn primary" onclick="closeModal('detailsModal')">Close</button>
+        <div id="modalContent" style="font-size: 15px; line-height: 1.6;"></div>
+        <div style="margin-top: 24px; display:flex; gap:12px; justify-content: flex-end;">
+            <button class="cal-btn" onclick="closeModal('detailsModal')">Close</button>
+            <button class="cal-btn primary" onclick="alert('Checking in patient...')">Check In</button>
         </div>
     </div>
 </div>
 
-<!-- Modal: Availability Manager -->
-<div class="modal-overlay" id="availabilityModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3 class="modal-title">Block Doctor Availability</h3>
-            <button class="close-btn" onclick="closeModal('availabilityModal')">&times;</button>
-        </div>
-        <div>
-            <p style="color: var(--dash-text-muted); margin-bottom: 20px;">Select a date and a time slot to mark it as UNAVAILABLE so clients cannot book it.</p>
-            
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Select Date:</label>
-            <input type="date" id="blockDate" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--dash-border); margin-bottom: 20px;">
-            
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Select Time Slot:</label>
-            <select id="blockSlot" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--dash-border); margin-bottom: 24px;">
-                <option value="9:00 AM">9:00 AM</option>
-                <option value="10:00 AM">10:00 AM</option>
-                <option value="11:00 AM">11:00 AM</option>
-                <option value="1:00 PM">1:00 PM</option>
-                <option value="2:00 PM">2:00 PM</option>
-                <option value="3:00 PM">3:00 PM</option>
-                <option value="4:00 PM">4:00 PM</option>
-            </select>
-            
-            <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                <button class="cal-btn" onclick="closeModal('availabilityModal')">Cancel</button>
-                <button class="cal-btn primary" onclick="submitBlockTime()">Toggle Block</button>
+<!-- Modal: Report Submission -->
+<div id="reportModal" style="display:none; position:fixed; z-index:100; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; padding: 20px;">
+    <div style="background:var(--dash-card-bg); padding:30px; border-radius:16px; max-width:450px; width:100%; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+        <h2 style="margin-top:0; color:var(--dash-text); font-size:20px;">Create Report</h2>
+        <p style="color:var(--dash-text-muted); font-size:14px; margin-bottom:20px;">Submit logs or issues to administration.</p>
+        
+        <form id="reportForm" style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Report Title</label>
+                <input type="text" id="repTitle" required style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
             </div>
-        </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Category</label>
+                <select id="repCat" required style="padding:10px; border-radius:8px; border:1px solid var(--dash-border);">
+                    <option value="Daily Summary">Daily Summary</option>
+                    <option value="Incident">Incident Report</option>
+                    <option value="Patient Issue">Patient Issue</option>
+                    <option value="System Issue">System Issue</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:13px; font-weight:600; color:var(--dash-text);">Description</label>
+                <textarea id="repDesc" required rows="4" style="padding:10px; border-radius:8px; border:1px solid var(--dash-border); resize:vertical;"></textarea>
+            </div>
+            
+            <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:10px;">
+                <button type="button" class="cal-btn" onclick="document.getElementById('reportModal').style.display='none'">Cancel</button>
+                <button type="submit" class="cal-btn primary">Submit Report</button>
+            </div>
+        </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script id="bookings-data" type="application/json">
+    {{ bookings_json | safe }}
+</script>
 <script>
-    // System Data passed from Flask
-    const rawBookings = {{ bookings_json | safe }};
-    const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
+    const rawBookings = JSON.parse(document.getElementById('bookings-data').textContent || '[]');
+    const timeSlots = [
+        "8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+        "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM",
+        "6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"
+    ];
     
     let currentDate = new Date();
-    // Adjust to Monday of current week
     const currentDay = currentDate.getDay();
-    const diff = currentDate.getDate() - currentDay + (currentDay == 0 ? -6 : 1);
-    let startOfWeek = new Date(currentDate.setDate(diff));
+    const diff = currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
+    let startOfWeek = new Date(new Date(currentDate).setDate(diff));
     
     let blockedSlotsCache = [];
 
-    async function loadBlockedSlots() {
-        try {
-            const res = await fetch('/api/availability');
-            blockedSlotsCache = await res.json();
-            renderCalendar();
-        } catch (e) {
-            console.error("Failed to load availability", e);
-        }
-    }
-
-    function formatDateForInput(d) {
+    function formatDate(d) {
         const local = new Date(d);
         local.setMinutes(d.getMinutes() - d.getTimezoneOffset());
         return local.toJSON().slice(0, 10);
     }
 
+    async function loadBlocked() {
+        try {
+            const res = await fetch('/api/availability');
+            blockedSlotsCache = await res.json();
+            renderCalendar();
+            initPerformanceChart();
+        } catch (e) { console.error("Load error", e); }
+    }
+
+    async function initPerformanceChart() {
+        try {
+            const res = await fetch('/api/v1/workload', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            
+            const labels = Object.keys(data.hourly);
+            const values = Object.values(data.hourly);
+            
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.map(l => l.replace(/ AM| PM/, '')),
+                    datasets: [{
+                        label: 'Appointments',
+                        data: values,
+                        backgroundColor: '#0EA5E9',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            
+            document.getElementById('performanceAdvice').innerText = 
+                data.percentage > 70 ? "High clinic utilization today." : "Manageable patient flow.";
+                
+        } catch (e) { console.error("Chart error", e); }
+    }
+
     function renderCalendar() {
         const grid = document.getElementById('calendarGrid');
-        grid.innerHTML = '';
-        
-        // Render Headers (Empty top-left + 7 days)
-        grid.innerHTML += `<div class="cal-header-cell" style="border-right: 1px solid var(--dash-border);">Time</div>`;
+        if (!grid) return;
+        grid.innerHTML = '<div class="cal-header-cell">Time</div>';
         
         const weekDates = [];
         for(let i=0; i<7; i++) {
             let d = new Date(startOfWeek);
             d.setDate(d.getDate() + i);
             weekDates.push(d);
-            
-            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-            const monthDay = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            grid.innerHTML += `<div class="cal-header-cell">${dayName}<br><span style="font-size: 11px; font-weight: 400;">${monthDay}</span></div>`;
+            const label = d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+            grid.innerHTML += `<div class="cal-header-cell">${label}</div>`;
         }
-        
-        // Update label
-        const endOfWeek = new Date(weekDates[6]);
-        document.getElementById('currentWeekLabel').innerText = 
-            `${weekDates[0].toLocaleDateString('en-US', {month:'short', day:'numeric'})} - ` +
-            `${endOfWeek.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}`;
 
-        // Render Time Slots & Cells
+        document.getElementById('currentWeekLabel').innerText = 
+            `${weekDates[0].toLocaleDateString('en-US',{month:'short',day:'numeric'})} - ${weekDates[6].toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+
         timeSlots.forEach(slot => {
-            // Time Col
-            grid.innerHTML += `<div class="cal-time-col" style="border-right: 1px solid var(--dash-border);">${slot}</div>`;
-            
-            // 7 Days Col
+            grid.innerHTML += `<div class="cal-time-col">${slot}</div>`;
             weekDates.forEach(date => {
-                const dateStr = formatDateForInput(date);
-                
-                // Find booking for this slot/date
-                const booking = rawBookings.find(b => b.date === dateStr && b.slot === slot && b.status === 'confirmed');
-                
-                // Find block for this slot/date
+                const dateStr = formatDate(date);
                 const block = blockedSlotsCache.find(b => b.date === dateStr && b.slot === slot);
+                const booking = rawBookings.find(b => b.date === dateStr && b.slot === slot && b.status === "confirmed");
                 
-                let cellHtml = `<div class="cal-cell cal-interactive-cell" onclick="handleCellClick('${dateStr}', '${slot}')">`;
+                let content = '<div class="slot-item slot-available">Free</div>';
                 
                 if (block) {
-                    cellHtml += `<div class="slot-item slot-unavailable">Blocked</div>`;
+                    content = '<div class="slot-item slot-unavailable">Break</div>';
                 } else if (booking) {
-                    // JSON escaping
-                    const safeData = encodeURIComponent(JSON.stringify(booking));
-                    cellHtml += `<div class="slot-item" style="background:#DBEAFE; border-color:#93C5FD; border-left-color: var(--dash-primary);" 
-                                      onclick="event.stopPropagation(); viewBookingDetails('${safeData}')">
-                                      <strong>${booking.pet_name}</strong><br>
-                                      ${booking.service.substring(0,12)}
-                                 </div>`;
-                } else {
-                    // Free block
-                    cellHtml += `<div class="slot-item" style="background:#DCFCE7; border-color:#86EFAC; border-left: 3px solid #166534; color: #166534; text-align: center;">Free</div>`;
+                    content = `<div class="slot-item slot-booked">🐾 ${booking.pet_name}</div>`;
                 }
                 
-                cellHtml += `</div>`;
-                grid.innerHTML += cellHtml;
+                grid.innerHTML += `<div class="cal-cell cal-interactive-cell" onclick="handleCellClick('${dateStr}', '${slot}', ${!!booking})">${content}</div>`;
             });
         });
     }
 
-    // Handlers
-    document.getElementById('prevWeekBtn').onclick = () => {
-        startOfWeek.setDate(startOfWeek.getDate() - 7);
-        renderCalendar();
-    };
-    
-    document.getElementById('nextWeekBtn').onclick = () => {
-        startOfWeek.setDate(startOfWeek.getDate() + 7);
-        renderCalendar();
-    };
+    async function handleCellClick(date, slot, isBooked) {
+        if (isBooked) {
+            alert('This slot is already booked and cannot be modified.');
+            return;
+        }
 
-    function handleCellClick(dateStr, slot) {
-        document.getElementById('blockDate').value = dateStr;
-        document.getElementById('blockSlot').value = slot;
-        openAvailabilityModal();
+        const isBlocked = blockedSlotsCache.some(b => b.date === date && b.slot === slot);
+        
+        try {
+            // Instant Toggle to Backend
+            const res = await fetch('/api/availability', {
+                method: isBlocked ? 'DELETE' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: date, slot: slot })
+            });
+
+            if (res.ok) {
+                if (isBlocked) {
+                    blockedSlotsCache = blockedSlotsCache.filter(b => !(b.date === date && b.slot === slot));
+                } else {
+                    blockedSlotsCache.push({ date: date, slot: slot });
+                }
+                renderCalendar(); // Rerender immediately
+            } else {
+                alert('Failed to update availability.');
+            }
+        } catch (e) {
+            console.error("Availability Toggle Error", e);
+        }
     }
 
-    function viewBookingDetails(safeData) {
-        const b = JSON.parse(decodeURIComponent(safeData));
+    function viewDetail(id) {
+        const b = rawBookings.find(item => item.id == id);
+        if (!b) return;
+        
         const html = `
-            <div style="background: #F8FAFC; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
-                <p><strong>Time:</strong> ${b.date} at ${b.slot}</p>
-                <p><strong>Service:</strong> ${b.service}</p>
-                <p><strong>Status:</strong> ${b.status.toUpperCase()}</p>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div>
-                    <h4 style="color:#0369A1; margin-bottom: 8px;">Client Info</h4>
-                    <p><strong>Name:</strong> <br>${b.client_name}</p>
+            <div style="background: #F8FAFC; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--dash-border);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span style="font-weight:700; color:var(--dash-primary);">${b.date} at ${b.slot}</span>
+                    <span class="status-pill status-${b.status}">${b.status.toUpperCase()}</span>
                 </div>
-                <div>
-                    <h4 style="color:#0369A1; margin-bottom: 8px;">Pet Info</h4>
-                    <p><strong>Name:</strong> ${b.pet_name} (${b.pet_type})</p>
+                <p style="margin:4px 0;"><strong>Service:</strong> ${b.service}</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background:white; border:1px solid var(--dash-border); padding:12px; border-radius:8px;">
+                    <h4 style="color:var(--dash-text-muted); font-size:11px; text-transform:uppercase; margin-bottom:8px;">Client</h4>
+                    <p style="margin:0; font-weight:600;">${b.client_name}</p>
+                    <p style="margin:4px 0; font-size:12px; color:var(--dash-text-muted);">${b.phone}</p>
+                </div>
+                <div style="background:white; border:1px solid var(--dash-border); padding:12px; border-radius:8px;">
+                    <h4 style="color:var(--dash-text-muted); font-size:11px; text-transform:uppercase; margin-bottom:8px;">Pet</h4>
+                    <p style="margin:0; font-weight:600;">${b.pet_name} (${b.pet_type})</p>
+                    <p style="margin:4px 0; font-size:12px; color:var(--dash-text-muted);">${b.pet_breed || 'Unknown Breed'}</p>
                 </div>
             </div>
         `;
@@ -561,38 +672,61 @@
         document.getElementById('detailsModal').classList.add('active');
     }
 
-    function openAvailabilityModal() {
-        if(!document.getElementById('blockDate').value) {
-            document.getElementById('blockDate').value = formatDateForInput(new Date());
-        }
-        document.getElementById('availabilityModal').classList.add('active');
-    }
-
-    function closeModal(id) {
-        document.getElementById(id).classList.remove('active');
-    }
-
-    async function submitBlockTime() {
-        const date = document.getElementById('blockDate').value;
-        const slot = document.getElementById('blockSlot').value;
+    async function updateStatus(bookingId, status) {
+        if (!confirm(`Are you sure you want to change the status to ${status}?`)) return;
         
         try {
-            const res = await fetch('/api/availability', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ date, slot })
+            const res = await fetch(`/api/v1/appointments/${bookingId}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+                },
+                body: JSON.stringify({ status })
             });
-            const data = await res.json();
-            if(data.success) {
-                closeModal('availabilityModal');
-                loadBlockedSlots(); // reload data
+            if (res.ok) {
+                location.reload(); // Quick refresh for now
+            } else {
+                alert('Error updating status');
             }
-        } catch(e) {
-            alert("Error updating availability");
+        } catch (e) {
+            console.error('Update status error', e);
         }
     }
 
-    // Run on init
-    loadBlockedSlots();
+    document.getElementById('reportForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const res = await fetch('/api/v1/reports', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+                },
+                body: JSON.stringify({
+                    title: document.getElementById('repTitle').value,
+                    category: document.getElementById('repCat').value,
+                    description: document.getElementById('repDesc').value
+                })
+            });
+            if (res.ok) {
+                alert("Report submitted successfully.");
+                document.getElementById('reportModal').style.display = 'none';
+                document.getElementById('reportForm').reset();
+            } else {
+                alert("Failed to submit report.");
+            }
+        } catch (e) {
+            alert("Error sending report.");
+        }
+    });
+
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    
+    document.getElementById('prevWeekBtn').onclick = () => { startOfWeek.setDate(startOfWeek.getDate()-7); renderCalendar(); };
+    document.getElementById('nextWeekBtn').onclick = () => { startOfWeek.setDate(startOfWeek.getDate()+7); renderCalendar(); };
+
+    // Init
+    loadBlocked();
 </script>
 {% endblock %}
