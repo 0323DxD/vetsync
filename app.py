@@ -33,6 +33,7 @@ class User(db.Model):
     email         = db.Column(db.String(120), unique=True, nullable=False)
     contact       = db.Column(db.String(30))
     password_hash = db.Column(db.String(256), nullable=False)
+    role          = db.Column(db.String(20), default='client') # client, staff, admin
     created_at    = db.Column(db.DateTime, default=datetime.utcnow)
     bookings      = db.relationship('Booking', backref='user', lazy=True)
 
@@ -83,6 +84,12 @@ class Booking(db.Model):
     user_id        = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at     = db.Column(db.DateTime, default=datetime.utcnow)
 
+class DoctorAvailability(db.Model):
+    __tablename__ = 'doctor_availability'
+    id         = db.Column(db.Integer, primary_key=True)
+    date       = db.Column(db.Date, nullable=False)
+    slot       = db.Column(db.String(20), nullable=False)
+    status     = db.Column(db.String(20), default='unavailable') 
 
 class ContactMessage(db.Model):
     __tablename__ = 'contact_messages'
@@ -114,8 +121,18 @@ def seed_data():
         ])
     if not User.query.filter_by(email='demo@vetsync.com').first():
         u = User(first_name='Demo', last_name='User',
-                 email='demo@vetsync.com', contact='0000000000')
+                 email='demo@vetsync.com', contact='0000000000', role='client')
         u.set_password('demo123')
+        db.session.add(u)
+    if not User.query.filter_by(email='adminvetclinic@gmail.com').first():
+        u = User(first_name='Admin', last_name='VetSync',
+                 email='adminvetclinic@gmail.com', contact='0000000001', role='admin')
+        u.set_password('vetadminclinic1214')
+        db.session.add(u)
+    if not User.query.filter_by(email='veterinarian123@gmail.com').first():
+        u = User(first_name='Staff', last_name='Veterinarian',
+                 email='veterinarian123@gmail.com', contact='0000000002', role='staff')
+        u.set_password('vet121516')
         db.session.add(u)
     db.session.commit()
 
@@ -126,6 +143,10 @@ def current_user():
     uid = session.get('user_id')
     return db.session.get(User, uid) if uid else None
 
+@app.context_processor
+def inject_user():
+    return dict(current_user=current_user())
+
 def login_required(f):
     from functools import wraps
     @wraps(f)
@@ -133,6 +154,28 @@ def login_required(f):
         if not current_user():
             flash('Please log in to access that page.', 'error')
             return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated
+
+def admin_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        user = current_user()
+        if not user or user.role != 'admin':
+            flash('Access denied: Admins only.', 'error')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated
+
+def staff_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        user = current_user()
+        if not user or user.role not in ['admin', 'staff']:
+            flash('Access denied: Staff only.', 'error')
+            return redirect(url_for('index'))
         return f(*args, **kwargs)
     return decorated
 
@@ -464,8 +507,15 @@ def login():
             session['user_id'] = u.id
             session['user']    = u.first_name
             flash(f'Welcome back, {u.first_name}!', 'success')
-            next_url = request.args.get('next') or url_for('index')
-            return redirect(next_url)
+            
+            # Role-based redirection
+            if u.role == 'admin':
+                return redirect(url_for('admin_dashboard'))
+            elif u.role == 'staff':
+                return redirect(url_for('staff_dashboard'))
+            else:
+                next_url = request.args.get('next') or url_for('dashboard')
+                return redirect(next_url)
         flash('Invalid email or password.', 'error')
     return render_template('login.html')
 
@@ -506,9 +556,127 @@ def contact():
 @login_required
 def dashboard():
     user     = current_user()
+    if user.role == 'admin':
+        return redirect(url_for('admin_dashboard'))
+    elif user.role == 'staff':
+        return redirect(url_for('staff_dashboard'))
+
     bookings = (Booking.query.filter_by(user_id=user.id)
                 .order_by(Booking.created_at.desc()).all())
     return render_template('dashboard.html', user=user, bookings=bookings)
+
+@app.route('/admin/dashboard')
+@login_required
+@admin_required
+def admin_dashboard():
+    user = current_user()
+    
+    # Calculate Metrics
+    from sqlalchemy import func
+    total_users = User.query.count()
+    total_pets  = db.session.query(func.count(func.distinct(Booking.pet_name))).scalar() or 0
+    today_appointments = Booking.query.filter_by(date=date.today()).count()
+    
+    # Simple month calculation
+    current_month = date.today().month
+    current_year  = date.today().year
+    
+    # In SQLite, extracting month from date is tricky, but we can filter via python
+    # For a real DB, extract(month) would be used.
+    # Simple approach: fetch all and filter, or use basic comparison if dates are strings.
+    # SQLAlchemy queries natively using standard date if mapped.
+    total_bookings_this_month = 0
+    all_books = Booking.query.all()
+    for b in all_books:
+        if b.date.month == current_month and b.date.year == current_year:
+            total_bookings_this_month += 1
+
+    staff_members = User.query.filter(User.role.in_(['staff', 'admin'])).all()
+
+    return render_template('admin_dashboard.html', 
+                           user=user, 
+                           total_users=total_users,
+                           total_pets=total_pets,
+                           today_appointments=today_appointments,
+                           total_bookings_this_month=total_bookings_this_month,
+                           staff_members=staff_members)
+
+@app.route('/staff/dashboard')
+@login_required
+@staff_required
+def staff_dashboard():
+    user = current_user()
+    from sqlalchemy import func
+    
+    today = date.today()
+    today_appointments = Booking.query.filter_by(date=today).count()
+    upcoming_appointments = Booking.query.filter(Booking.date > today, Booking.status == 'confirmed').count()
+    pending_bookings = Booking.query.filter_by(status='pending').count()
+    
+    # Total patients this month
+    total_patients_this_month = 0
+    all_books = Booking.query.all()
+    for b in all_books:
+        if b.date.month == today.month and b.date.year == today.year:
+            total_patients_this_month += 1
+
+    bookings = Booking.query.order_by(Booking.date.asc(), Booking.slot.asc()).all()
+    
+    # Prepare JSON data for Calendar
+    b_json = []
+    for b in bookings:
+        b_json.append({
+            'id': b.id,
+            'date': b.date.isoformat(),
+            'slot': b.slot,
+            'client_name': b.name,
+            'pet_name': b.pet_name,
+            'pet_type': b.pet_type,
+            'service': b.service_ref.name,
+            'status': b.status
+        })
+
+    return render_template('staff_dashboard.html', 
+                           user=user, 
+                           today_appointments=today_appointments,
+                           upcoming_appointments=upcoming_appointments,
+                           pending_bookings=pending_bookings,
+                           total_patients_this_month=total_patients_this_month,
+                           bookings=bookings,
+                           bookings_json=json.dumps(b_json))
+
+@app.route('/api/availability', methods=['GET', 'POST'])
+@login_required
+@staff_required
+def api_availability():
+    if request.method == 'GET':
+        blocks = DoctorAvailability.query.all()
+        return jsonify([{'date': b.date.isoformat(), 'slot': b.slot, 'status': b.status} for b in blocks])
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        target_date = data.get('date')
+        slot = data.get('slot')
+        
+        if not target_date or not slot:
+            return jsonify({'error': 'Missing data'}), 400
+            
+        try:
+            d = datetime.strptime(target_date, '%Y-%m-%d').date()
+        except Exception:
+            return jsonify({'error': 'Invalid date format'}), 400
+            
+        existing = DoctorAvailability.query.filter_by(date=d, slot=slot).first()
+        if existing:
+            db.session.delete(existing) # Toggle it off (make it available)
+            status = 'available'
+        else:
+            new_block = DoctorAvailability(date=d, slot=slot, status='unavailable')
+            db.session.add(new_block)
+            status = 'unavailable'
+            
+        db.session.commit()
+        return jsonify({'success': True, 'date': target_date, 'slot': slot, 'new_status': status})
 
 
 @app.route('/booking/cancel/<int:bid>', methods=['POST'])

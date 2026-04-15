@@ -50,17 +50,18 @@ input, select, textarea, button { font-family: var(--font-body); }
 }
 .logo-icon { font-size: 1.6rem; }
 .nav-links {
-    display: flex; gap: 0.25rem; margin-left: 1rem; flex: 1;
+    display: flex; gap: 0.25rem; margin-left: auto; margin-right: auto; flex: 1 1 auto; justify-content: center;
 }
 .nav-links a {
-    color: rgba(255,255,255,0.8); font-weight: 500; font-size: 0.9rem;
-    padding: 0.4rem 1rem; border-radius: 8px; transition: var(--transition);
+    color: rgba(255,255,255,0.8); font-weight: 500; font-size: 0.85rem;
+    padding: 0.4rem 0.6rem; border-radius: 8px; transition: var(--transition);
+    white-space: nowrap;
 }
 .nav-links a:hover, .nav-links a.active {
     color: var(--white); background: rgba(255,255,255,0.15);
 }
-.nav-auth { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
-.nav-user { color: rgba(255,255,255,0.85); font-size: 0.85rem; }
+.nav-auth { display: flex; align-items: center; gap: 1.2rem; flex-shrink: 0; margin-left: auto; }
+.nav-user { color: rgba(255,255,255,0.85); font-size: 0.9rem; font-weight: 600; white-space: nowrap; }
 .btn-nav-outline {
     padding: 0.4rem 1.1rem; border-radius: 8px;
     border: 1.5px solid rgba(255,255,255,0.5);

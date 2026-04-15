@@ -16,9 +16,10 @@
                 <input type="email" name="email" placeholder="Enter your Email" required>
                 <span class="field-icon">✉️</span>
             </div>
-            <div class="auth-field">
-                <input type="password" name="password" placeholder="Enter your Password" required>
-                <span class="field-icon">🔒</span>
+            <div class="auth-field" style="position: relative;">
+                <input type="password" id="loginPassword" name="password" placeholder="Enter your Password" required>
+                <span class="field-icon" style="position:absolute; left: 15px; top:50%; transform:translateY(-50%);">🔒</span>
+                <span onclick="togglePassword('loginPassword', this)" title="Show Password" style="position:absolute; right: 15px; top:50%; transform:translateY(-50%); cursor:pointer; font-size: 18px; color: #64748B;">👁️</span>
             </div>
             <div class="login-options">
                 <label class="remember-me">
@@ -31,4 +32,19 @@
         </form>
     </div>
 </section>
+
+<script>
+function togglePassword(inputId, iconEl) {
+    const input = document.getElementById(inputId);
+    if (input.type === "password") {
+        input.type = "text";
+        iconEl.innerText = "👀"; /* Open eye representation */
+        iconEl.title = "Hide Password";
+    } else {
+        input.type = "password";
+        iconEl.innerText = "👁️"; /* Standard eye representation */
+        iconEl.title = "Show Password";
+    }
+}
+</script>
 {% endblock %}

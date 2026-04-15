@@ -19,10 +19,30 @@
             <span class="logo-text">VetSync</span>
         </a>
         <ul class="nav-links">
-            <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
-            <li><a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">About</a></li>
-            <li><a href="{{ url_for('services_page') }}" class="{% if request.endpoint == 'services_page' %}active{% endif %}">Services</a></li>
-            <li><a href="{{ url_for('contact') }}" class="{% if request.endpoint == 'contact' %}active{% endif %}">Contacts</a></li>
+            {% if current_user and current_user.role == 'admin' %}
+                <li><a href="{{ url_for('admin_dashboard') }}" class="{% if request.endpoint == 'admin_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="#" class="">Users & Staff</a></li>
+                <li><a href="#" class="">Appointments</a></li>
+                <li><a href="#" class="">Reports</a></li>
+                <li><a href="#" class="">Settings</a></li>
+            {% elif current_user and current_user.role == 'staff' %}
+                <li><a href="{{ url_for('staff_dashboard') }}" class="{% if request.endpoint == 'staff_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="#" class="">Appointments</a></li>
+                <li><a href="#" class="">Pet Records</a></li>
+                <li><a href="{{ url_for('staff_dashboard') }}" class="">Schedule</a></li>
+                <li><a href="#" class="">Offers</a></li>
+            {% elif current_user and current_user.role == 'client' %}
+                <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('services_page') }}" class="{% if request.endpoint == 'services_page' %}active{% endif %}">Services</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Appointments</a></li>
+                <li><a href="#" class="">My Pets</a></li>
+                <li><a href="#" class="">Offers</a></li>
+            {% else %}
+                <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">About</a></li>
+                <li><a href="{{ url_for('services_page') }}" class="{% if request.endpoint == 'services_page' %}active{% endif %}">Services</a></li>
+                <li><a href="{{ url_for('contact') }}" class="{% if request.endpoint == 'contact' %}active{% endif %}">Contacts</a></li>
+            {% endif %}
         </ul>
         <div class="nav-auth">
             {% if session.get('user') %}

@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - VetSync{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --dash-primary: #0EA5E9;
+        --dash-primary-dark: #0284C7;
+        --dash-bg: #F8FAFC;
+        --dash-card-bg: #FFFFFF;
+        --dash-border: #E2E8F0;
+        --dash-text: #1E293B;
+        --dash-text-muted: #64748B;
+    }
+
+    body {
+        background-color: var(--dash-bg);
+    }
+
+    .dash-container {
+        max-width: 1300px;
+        margin: 100px auto 40px; /* Provides top clearance for the 64px fixed navbar */
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 32px;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .dash-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end; /* Align bottom edge naturally to prevent squashing */
+        flex-wrap: wrap;       /* Prevents cramping on smaller screens */
+        gap: 20px;
+    }
+
+    .dash-title {
+        color: var(--dash-text);
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-card {
+        background: var(--dash-card-bg);
+        border: 1px solid var(--dash-border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: var(--dash-text-muted);
+        font-weight: 500;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--dash-text);
+    }
+
+    /* Sections */
+    .section-card {
+        background: var(--dash-card-bg);
+        border: 1px solid var(--dash-border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--dash-text);
+        margin: 0;
+    }
+
+    .btn {
+        background: white;
+        border: 1px solid var(--dash-border);
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--dash-text);
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn.primary {
+        background: var(--dash-primary);
+        color: white;
+        border-color: var(--dash-primary);
+    }
+    .btn.primary:hover { background: var(--dash-primary-dark); }
+    .btn:hover:not(.primary) { background: var(--dash-bg); }
+
+    .btn.danger-outline { color: #DC2626; border-color: #FECACA; background: #FEF2F2; }
+    .btn.danger-outline:hover { background: #FEE2E2; }
+    
+    .btn.small { padding: 4px 12px; font-size: 12px; }
+
+    /* Table */
+    .dash-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .dash-table th, .dash-table td {
+        padding: 16px 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--dash-border);
+    }
+
+    .dash-table th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--dash-text-muted);
+        font-weight: 600;
+        background: #F8FAFC;
+    }
+
+    .dash-table td {
+        font-size: 14px;
+        color: var(--dash-text);
+    }
+
+    .dash-table tr:last-child td { border-bottom: none; }
+
+    .status-pill {
+        padding: 4px 10px;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .status-active { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+
+    /* Activity Feed */
+    .activity-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .activity-item {
+        display: flex;
+        gap: 12px;
+    }
+    
+    .activity-icon {
+        width: 32px; height: 32px;
+        background: #E0F2FE;
+        color: var(--dash-primary);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        font-size: 16px;
+    }
+    
+    .activity-text {
+        font-size: 13px;
+        color: var(--dash-text);
+        line-height: 1.5;
+    }
+    .activity-time {
+        font-size: 12px;
+        color: var(--dash-text-muted);
+        display: block;
+        margin-top: 2px;
+    }
+
+    /* Quick Actions */
+    .quick-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .qa-btn {
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid var(--dash-border);
+        border-radius: 12px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--dash-text);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .qa-btn:hover {
+        background: white;
+        border-color: var(--dash-primary);
+        color: var(--dash-primary);
+        box-shadow: 0 4px 6px rgba(14,165,233,0.1);
+    }
+
+    @media (max-width: 900px) {
+        .dash-container { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="dash-container">
+    
+    <div class="main-content">
+        <div class="dash-header">
+            <div>
+                <h1 class="dash-title">Admin Dashboard</h1>
+                <p style="color: var(--dash-text-muted); margin-top: 6px; font-size: 15px;">VetSync Master Control Center</p>
+            </div>
+        </div>
+
+    <!-- STATS GRID -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">👥 Total Users</span>
+            <span class="stat-value">{{ total_users }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">🐾 Pets Registered</span>
+            <span class="stat-value">{{ total_pets }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">📅 Today's Appts</span>
+            <span class="stat-value">{{ today_appointments }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">📈 Bookings This Month</span>
+            <span class="stat-value">{{ total_bookings_this_month }}</span>
+        </div>
+    </div>
+
+        <!-- STAFF MANAGEMENT -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">Staff & Doctor Management</h2>
+                <button class="btn primary" onclick="alert('Feature coming soon: Open Add Staff modal.')">+ Add New Staff</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for st in staff_members %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">{{ st.first_name }} {{ st.last_name }}</div>
+                            </td>
+                            <td>{{ st.email }}</td>
+                            <td>
+                                <span style="color: var(--dash-text-muted); font-weight: 500; font-size: 13px; text-transform: capitalize;">{{ st.role }}</span>
+                            </td>
+                            <td><span class="status-pill status-active">Active</span></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn small" onclick="alert('Edit clicked')">Edit</button>
+                                    {% if st.email != user.email %}
+                                    <button class="btn small danger-outline" onclick="alert('Deactivate clicked')">Deactivate</button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        
+        <!-- Quick Actions -->
+        <div class="section-card">
+            <h2 class="section-title" style="margin-bottom: 20px;">Quick Actions</h2>
+            <div class="quick-actions-grid">
+                <button class="qa-btn">View All Users</button>
+                <button class="qa-btn">Export Data</button>
+                <button class="qa-btn">System Settings</button>
+                <button class="qa-btn">Backup DB</button>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="section-card">
+            <h2 class="section-title" style="margin-bottom: 20px;">Recent Activity</h2>
+            <div class="activity-feed">
+                <!-- Mock Data to demonstrate UI as per plan -->
+                <div class="activity-item">
+                    <div class="activity-icon">📅</div>
+                    <div>
+                        <div class="activity-text"><strong>Sarah Jenkins</strong> created a new booking for <strong>Buster</strong>.</div>
+                        <span class="activity-time">Just now</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">✅</div>
+                    <div>
+                        <div class="activity-text">Appointment confirmed for <strong>Luna (Cat)</strong>.</div>
+                        <span class="activity-time">1 hour ago</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:#DCFCE7; color:#166534;">👤</div>
+                    <div>
+                        <div class="activity-text">System Administrator logged in.</div>
+                        <span class="activity-time">2 hours ago</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:#FEE2E2; color:#991B1B;">❌</div>
+                    <div>
+                        <div class="activity-text"><strong>Mark T.</strong> cancelled an appointment.</div>
+                        <span class="activity-time">Yesterday at 4:32 PM</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 20px;">View Full Logs</button>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
