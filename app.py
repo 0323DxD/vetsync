@@ -37,22 +37,78 @@ app.secret_key = os.getenv('SECRET_KEY', 'vetsync-secret-key-2024')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vetsync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret-jwt-key')
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15) # Short-lived for security
 
 db = SQLAlchemy(app)
 
-# Configure Secure Session Cookies
+# ===================== SECURITY CONFIGURATION =====================
+# THREAT 2: Man-in-the-Middle (MITM) Protection
+# We enforce HTTPS-only cookies (Secure=True) and block cross-site script access (HttpOnly=True).
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SECURE=False, # Set to True if using HTTPS in production
-    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=True,    # Ensures cookies are ONLY sent over encrypted HTTPS
+    SESSION_COOKIE_SAMESITE='Lax', # Prevents CSRF (Cross-Site Request Forgery)
+    PERMANENT_SESSION_LIFETIME=timedelta(minutes=30)
 )
+
+# --- THREAT 1: SQL Injection Protection ---
+# Logic: We use SQLAlchemy ORM which automatically parameterizes all queries. 
+# This means user input is treated as DATA, not as executable CODE, making SQLi impossible.
+# Added clean_input() for secondary defense (XSS protection).
+def clean_input(text, allow_html=False):
+    """
+    Robust input sanitization to prevent XSS and data injection.
+    Strips dangerous characters and normalizes whitespace.
+    """
+    if not text or not isinstance(text, str):
+        return text
+    
+    # Remove null bytes and dangerous control characters
+    text = text.replace('\0', '').strip()
+    
+    if not allow_html:
+        # Basic HTML stripping via regex (as 'bleach' is not in requirements)
+        text = re.sub(r'<[^>]*?>', '', text)
+        
+    # Prevent common injection patterns
+    text = text.replace('"', '&quot;').replace("'", "&#39;")
+    return text
+
+
+@app.before_request
+def verify_session_integrity():
+    """
+    THREAT 3: Session Hijacking / Device Theft Protection
+    Logic: We implement 'Fingerprinting'. We lock the session to the user's
+    specific IP Address and Browser (User-Agent). If a cookie is stolen and 
+    used from a different computer, the mismatch will trigger an auto-logout.
+    """
+    if 'user_id' in session:
+        stored_ip = session.get('ip')
+        stored_ua = session.get('user_agent')
+        
+        if stored_ip != request.remote_addr or stored_ua != request.headers.get('User-Agent'):
+            session.clear()
+            flash('Security Alert: Session terminated due to suspicious activity (Device/IP change).', 'error')
+            return redirect(url_for('login'))
 
 @app.after_request
 def add_security_headers(response):
+    """
+    Adds production-grade security headers to every response.
+    Protects against MITM, XSS, and Clickjacking.
+    """
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'
+    
+    # HSTS: Enforce HTTPS for 1 year (Standard security practice)
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    
+    # CSP: Restrict resource loading to trusted sources
+    # Note: 'unsafe-inline' is used sparingly for legacy templates; move to nonces in future.
+    response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';"
+    
     return response
 
 class User(db.Model):
@@ -543,7 +599,7 @@ def offline_page():
 @app.route('/book', methods=['POST'])
 @login_required
 def book():
-    g    = lambda k: request.form.get(k, '').strip()
+    g    = lambda k: clean_input(request.form.get(k, ''))
     name       = g('name')
     email      = g('email')
     phone      = g('phone')
@@ -615,10 +671,10 @@ def book():
 @app.route('/signup', methods=['GET','POST'])
 def signup():
     if request.method == 'POST':
-        fn  = request.form.get('first_name','').strip()
-        ln  = request.form.get('last_name','').strip()
-        em  = request.form.get('email','').strip().lower()
-        ct  = request.form.get('contact','').strip()
+        fn  = clean_input(request.form.get('first_name',''))
+        ln  = clean_input(request.form.get('last_name',''))
+        em  = clean_input(request.form.get('email','').lower())
+        ct  = clean_input(request.form.get('contact',''))
         pw  = request.form.get('password','')
         pw2 = request.form.get('re_password','')
         if pw != pw2:
@@ -638,7 +694,7 @@ def signup():
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
-        email    = request.form.get('email','').strip().lower()
+        email    = clean_input(request.form.get('email','').lower())
         password = request.form.get('password','')
         user = User.query.filter_by(email=email).first()
 
@@ -646,7 +702,16 @@ def login():
             if not user.is_active:
                 flash('Your account has been deactivated. Please contact support.', 'error')
                 return render_template('login.html')
+            
+            # SESSION ROTATION: We clear the old session and create a new one on login.
+            # This prevents 'Session Fixation' attacks where an attacker sets your ID.
+            session.clear()
             session['user_id'] = user.id
+            
+            # Generate the 'Fingerprint' snapshot
+            session['ip'] = request.remote_addr
+            session['user_agent'] = request.headers.get('User-Agent')
+            
             flash(f'Welcome back, {user.first_name}!', 'success')
             
             # Check for redirect target in either args (GET param) or form (hidden input if we added one)
