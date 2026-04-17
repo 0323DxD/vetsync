@@ -374,6 +374,16 @@
     }
 </style>
 
+<div id="sessionGuard" style="position:fixed; inset:0; background:white; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div style="font-size: 24px; margin-bottom: 20px;">🛡️</div>
+    <p style="font-weight:600; color:var(--dash-text);">Verifying Staff Session...</p>
+    <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--dash-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+</div>
+
+<style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+
 <div class="dash-container" style="display: grid; grid-template-columns: 1fr 340px; gap: 30px; align-items: start;">
     
     <div class="main-content">
@@ -598,15 +608,25 @@
     
     let blockedSlotsCache = [];
 
-    function formatDate(d) {
-        const local = new Date(d);
-        local.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        return local.toJSON().slice(0, 10);
+    function getAuthHeaders() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            console.warn("Session Missing: Redirecting...");
+            window.location.href = '/login?msg=Session+Expired';
+            return null;
+        }
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
     }
 
     async function loadBlocked() {
+        const headers = getAuthHeaders();
+        if (!headers) return;
+        
         try {
-            const res = await fetch('/api/availability');
+            const res = await fetch('/api/availability', { headers });
             blockedSlotsCache = await res.json();
             renderCalendar();
             initPerformanceChart();
@@ -614,10 +634,11 @@
     }
 
     async function initPerformanceChart() {
+        const headers = getAuthHeaders();
+        if (!headers) return;
+
         try {
-            const res = await fetch('/api/v1/workload', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
-            });
+            const res = await fetch('/api/v1/workload', { headers });
             if (!res.ok) return;
             const data = await res.json();
             
@@ -722,7 +743,7 @@
             // Instant Toggle to Backend
             const res = await fetch('/api/availability', {
                 method: isBlocked ? 'DELETE' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({ date: date, slot: slot })
             });
 
@@ -824,7 +845,15 @@
     document.getElementById('prevWeekBtn').onclick = () => { startOfWeek.setDate(startOfWeek.getDate()-7); renderCalendar(); };
     document.getElementById('nextWeekBtn').onclick = () => { startOfWeek.setDate(startOfWeek.getDate()+7); renderCalendar(); };
 
-    // Init
-    loadBlocked();
+    // --- Initialization with Session Bridge ---
+    window.addEventListener('load', () => {
+        setTimeout(async () => {
+            const headers = getAuthHeaders();
+            if (headers) {
+                document.getElementById('sessionGuard').style.display = 'none';
+                await loadBlocked();
+            }
+        }, 500);
+    });
 </script>
 {% endblock %}

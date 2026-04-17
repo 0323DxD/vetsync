@@ -327,6 +327,16 @@
     }
 </style>
 
+<div id="sessionGuard" style="position:fixed; inset:0; background:white; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div style="font-size: 24px; margin-bottom: 20px;">🛡️</div>
+    <p style="font-weight:600; color:var(--dash-text);">Verifying Admin Session...</p>
+    <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--dash-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+</div>
+
+<style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+
 <div class="dash-container">
     
     <div class="main-content">
@@ -608,9 +618,26 @@
         } catch (e) { alert("Server error."); }
     });
 
+    // --- Auth Hardening ---
+    function getAuthHeaders() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            console.warn("Session Missing: Redirecting...");
+            window.location.href = '/login?msg=Session+Expired';
+            return null;
+        }
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+    }
+
     async function loadStaff() {
+        const headers = getAuthHeaders();
+        if (!headers) return;
+
         try {
-            const res = await fetch('/api/v1/users');
+            const res = await fetch('/api/v1/users', { headers });
             const users = await res.json();
             const body = document.getElementById('staffTableBody');
             body.innerHTML = '';
@@ -643,7 +670,7 @@
         try {
             const res = await fetch(`/api/v1/users/${userId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({ is_active: !currentStatus })
             });
             if (res.ok) location.reload();
@@ -660,8 +687,11 @@
 
     // ====== APPOINTMENTS =======
     async function loadAppointments() {
+        const headers = getAuthHeaders();
+        if (!headers) return;
+
         try {
-            const res = await fetch('/api/v1/appointments', { headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}` }});
+            const res = await fetch('/api/v1/appointments', { headers });
             const bookings = await res.json();
             const body = document.getElementById('adminBookingsTableBody');
             body.innerHTML = '';
@@ -707,8 +737,11 @@
     // ====== REPORTS ==========
     let allReports = [];
     async function loadReports() {
+        const headers = getAuthHeaders();
+        if (!headers) return;
+
         try {
-            const res = await fetch('/api/v1/reports', { headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}` }});
+            const res = await fetch('/api/v1/reports', { headers });
             const reports = await res.json();
             allReports = reports;
             const body = document.getElementById('reportsTableBody');
@@ -764,9 +797,17 @@
         } catch (e) { alert("Failed to save review."); }
     });
 
-    loadStaff();
-    loadAppointments();
-    loadReports();
+    // --- Initialization with Session Bridge ---
+    window.addEventListener('load', () => {
+        // Simple 500ms grace period to ensure localStorage is ready
+        setTimeout(async () => {
+            const headers = getAuthHeaders();
+            if (headers) {
+                document.getElementById('sessionGuard').style.display = 'none';
+                await Promise.all([loadStaff(), loadAppointments(), loadReports()]);
+            }
+        }, 500);
+    });
 </script>
 
 {% endblock %}
