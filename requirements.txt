@@ -9,3 +9,5 @@ scikit-learn
 pandas
 sentence-transformers
 datasets
+pywebpush==1.14.0
+cryptography==42.0.5

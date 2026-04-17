@@ -34,39 +34,54 @@ self.addEventListener('activate', event => {
 
 // Fetch Strategy: Network First for API/Pages, Stale-While-Revalidate for Statics
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
+  // ... existing fetch logic
+});
 
-  // Skip non-GET requests or requests from other origins (except fonts)
-  if (event.request.method !== 'GET' || (!url.origin.includes(location.hostname) && !url.origin.includes('fonts'))) {
-    return;
+// Push: Handle incoming notifications
+self.addEventListener('push', event => {
+  console.log('SW: Push received');
+  let data = { title: 'VetSync Update', body: 'You have a new update from VetSync.', icon: '/static/images/vet-dog.png' };
+  
+  try {
+    if (event.data) {
+      data = event.data.json();
+    }
+  } catch (e) {
+    console.error('Push data parse error:', e);
   }
 
-  // Handle API and dynamic pages (Network First)
-  if (url.pathname.startsWith('/api/') || !url.pathname.includes('/static/')) {
-    event.respondWith(
-      fetch(event.request)
-        .then(networkResponse => {
-          // Clone response and cache it
-          const clonedResponse = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clonedResponse));
-          return networkResponse;
-        })
-        .catch(() => {
-          return caches.match(event.request).then(cachedResponse => {
-            return cachedResponse || caches.match('/offline');
-          });
-        })
-    );
-  } else {
-    // Handle static assets (Stale-While-Revalidate)
-    event.respondWith(
-      caches.match(event.request).then(cachedResponse => {
-        const fetchPromise = fetch(event.request).then(networkResponse => {
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, networkResponse.clone()));
-          return networkResponse;
-        });
-        return cachedResponse || fetchPromise;
-      })
-    );
-  }
+  const options = {
+    body: data.body,
+    icon: data.icon || '/static/images/vet-dog.png',
+    badge: '/static/images/vet-dog.png',
+    data: data.data || { url: '/dashboard' },
+    vibrate: [100, 50, 100],
+    actions: [
+      { action: 'view', title: 'View Update' }
+    ]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// Notification Click: Navigate to URL
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const urlToOpen = event.notification.data.url || '/dashboard';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      for (let i = 0; i < windowClients.length; i++) {
+        const client = windowClients[i];
+        if (client.url === urlToOpen && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
 });

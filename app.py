@@ -8,6 +8,7 @@ import json
 import re
 import traceback
 from dotenv import load_dotenv
+from pywebpush import webpush, WebPushException
 
 # Load environment variables from .env file (for local development)
 load_dotenv()
@@ -50,6 +51,11 @@ app.config.update(
     SESSION_COOKIE_SAMESITE='Lax', # Prevents CSRF (Cross-Site Request Forgery)
     PERMANENT_SESSION_LIFETIME=timedelta(minutes=30)
 )
+
+# --- Web Push Configuration ---
+VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', 'BD9p1qDG9s8ff3E9K8QSjd1KCtzNf1wOj3mFJC60VwhTgQ0WmBoKI9BrLCMpQgo_fyFBVVWrJu6FVgqx4JbhtjA')
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgtlD6aKe4UjqV0pRZ\nG/e0jvc0nrodnWeNoZcVAsjEb0mhRANCAAQ/adagxvbPH39xPSvEEo3dSgrczX9c\nDo95hSQutFcIU4ENFpgaCiPQaywjKUIKP38hQVVVqybuhVYKseCW4bYw\n-----END PRIVATE KEY-----')
+VAPID_CLAIMS = {"sub": "mailto:admin@vetsync.com"}
 
 # --- THREAT 1: SQL Injection Protection ---
 # Logic: We use SQLAlchemy ORM which automatically parameterizes all queries. 
@@ -202,6 +208,15 @@ class Notification(db.Model):
     message       = db.Column(db.Text, nullable=False)
     read          = db.Column(db.Boolean, default=False)
     created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+
+class PushSubscription(db.Model):
+    __tablename__ = 'push_subscriptions'
+    id       = db.Column(db.Integer, primary_key=True)
+    user_id  = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    endpoint = db.Column(db.Text, nullable=False)
+    p256dh   = db.Column(db.String(255), nullable=False)
+    auth     = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Report(db.Model):
     __tablename__ = 'reports'
@@ -930,6 +945,13 @@ def update_booking_status_web(bid):
     else:
         booking.status = status
         db.session.commit()
+        
+        # Trigger Push Notification to Client
+        if booking.user_id:
+            title = f"Booking {status.capitalize()}"
+            msg = f"Your appointment for {booking.pet_name} ({booking.service_ref.name}) on {booking.date} is now {status}."
+            send_push_notification(booking.user_id, title, msg)
+        
         flash(f'Booking #{bid} updated to {status}.', 'success')
     
     return redirect(request.referrer or url_for('staff_dashboard'))
@@ -943,6 +965,10 @@ def delete_booking_web(bid):
     if not booking:
         flash('Booking not found.', 'error')
     else:
+        # Notification before deletion
+        if booking.user_id:
+            send_push_notification(booking.user_id, "Booking Cancelled", f"Your booking for {booking.pet_name} on {booking.date} has been cancelled by the staff.")
+        
         db.session.delete(booking)
         db.session.commit()
         flash(f'Booking #{bid} has been removed.', 'success')
@@ -1195,6 +1221,11 @@ def update_appointment(current_user_jwt, booking_id):
         if data['status'] not in ['confirmed', 'pending', 'cancelled', 'completed']:
             return jsonify({'error': 'Invalid status'}), 400
         booking.status = data['status']
+        # Notify on status change via API
+        if booking.user_id:
+            title = f"Appointment Update"
+            msg = f"Your booking for {booking.pet_name} is now {booking.status}."
+            send_push_notification(booking.user_id, title, msg)
         
     db.session.commit()
     return jsonify({'message': 'Booking updated successfully', 'status': booking.status}), 200
@@ -1245,6 +1276,10 @@ def api_notifications(current_user_jwt):
         
         db.session.add(new_notification)
         db.session.commit()
+        
+        # Trigger Web Push for manual notification
+        send_push_notification(new_notification.user_id, title, message)
+        
         return jsonify({'message': 'Notification sent successfully', 'notification_id': new_notification.id}), 201
 
 @api_v1.route('/workload', methods=['GET'])
@@ -1269,6 +1304,67 @@ def get_workload_api(current_user_jwt):
         'percentage': round(percentage, 1)
     }), 200
 
+
+# --- Push Notification API ---
+
+@api_v1.route('/push/public-key', methods=['GET'])
+def get_push_public_key():
+    return jsonify({'public_key': VAPID_PUBLIC_KEY}), 200
+
+@api_v1.route('/push/subscribe', methods=['POST'])
+@jwt_required
+def subscribe_push(current_user_jwt):
+    data = request.get_json()
+    if not data or 'endpoint' not in data:
+        return jsonify({'error': 'Invalid subscription data'}), 400
+    
+    # Check if subscription already exists for this endpoint
+    existing = PushSubscription.query.filter_by(endpoint=data['endpoint']).first()
+    if existing:
+        existing.user_id = current_user_jwt['user_id']
+        existing.p256dh = data['keys']['p256dh']
+        existing.auth = data['keys']['auth']
+    else:
+        new_sub = PushSubscription(
+            user_id = current_user_jwt['user_id'],
+            endpoint = data['endpoint'],
+            p256dh = data['keys']['p256dh'],
+            auth = data['keys']['auth']
+        )
+        db.session.add(new_sub)
+    
+    db.session.commit()
+    return jsonify({'message': 'Subscribed successfully'}), 201
+
+def send_push_notification(user_id, title, body, url=None):
+    """Utility to send a push notification to all devices of a user."""
+    subscriptions = PushSubscription.query.filter_by(user_id=user_id).all()
+    payload = {
+        "title": title,
+        "body": body,
+        "icon": "/static/images/vet-dog.png",
+        "data": {"url": url or "/dashboard"}
+    }
+    
+    for sub in subscriptions:
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": sub.endpoint,
+                    "keys": {"p256dh": sub.p256dh, "auth": sub.auth}
+                },
+                data=json.dumps(payload),
+                vapid_private_key=VAPID_PRIVATE_KEY,
+                vapid_claims=VAPID_CLAIMS
+            )
+        except WebPushException as ex:
+            print(f"Push failed for user {user_id}: {ex}")
+            # If the endpoint is no longer valid, we should remove it
+            if ex.response and ex.response.status_code in [404, 410]:
+                db.session.delete(sub)
+                db.session.commit()
+        except Exception as e:
+            print(f"Unexpected push error: {e}")
 
 @api_v1.route('/reports', methods=['GET', 'POST'])
 @jwt_required
